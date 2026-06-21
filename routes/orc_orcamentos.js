@@ -62,12 +62,12 @@ router.get('/', async (req, res) => {
         e.nome as nome_empresa,
         emb."Nome_Embar" as nome_embarcacao,
         emb."Num_PB" as num_pb,
-        forn."Nome" as nome_fornecedor,
+        forn."Cliente_Nome" as nome_fornecedor,
         u.nome as usuario_cadastro_nome
       FROM orcamento_servico o
       INNER JOIN mae_empresa e ON o.id_empresa = e.id_empresa
       INNER JOIN "P_BOAT_1_Embarcacao" emb ON o.id_embarcacao = emb."Código"
-      LEFT JOIN "Cliente" forn ON o.id_fornecedor = forn."ID"
+      LEFT JOIN "Cliente" forn ON o.id_fornecedor = forn."Código"
       LEFT JOIN mae_usuario u ON o.usuario_cadastro = u.id_usuario
       ${whereClause}
       ORDER BY o.data_orcamento DESC, o.id_orcamento DESC
@@ -109,13 +109,13 @@ router.get('/:id', async (req, res) => {
         emb."Nome_Embar" as nome_embarcacao,
         emb."Num_PB" as num_pb,
         emb."Cod_Cliente" as cod_proprietario,
-        forn."Nome" as nome_fornecedor,
-        forn."CPF_CNPJ" as cnpj_fornecedor,
+        forn."Cliente_Nome" as nome_fornecedor,
+        forn."Cliente_CPF" as cnpj_fornecedor,
         u.nome as usuario_cadastro_nome
       FROM orcamento_servico o
       INNER JOIN mae_empresa e ON o.id_empresa = e.id_empresa
       INNER JOIN "P_BOAT_1_Embarcacao" emb ON o.id_embarcacao = emb."Código"
-      LEFT JOIN "Cliente" forn ON o.id_fornecedor = forn."ID"
+      LEFT JOIN "Cliente" forn ON o.id_fornecedor = forn."Código"
       LEFT JOIN mae_usuario u ON o.usuario_cadastro = u.id_usuario
       WHERE o.id_orcamento = $1
     `, [id]);
