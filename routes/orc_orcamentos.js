@@ -67,7 +67,7 @@ router.get('/', async (req, res) => {
       FROM orcamento_servico o
       INNER JOIN mae_empresa e ON o.id_empresa = e.id_empresa
       INNER JOIN "P_BOAT_1_Embarcacao" emb ON o.id_embarcacao = emb."Código"
-      LEFT JOIN "Cliente" forn ON o.id_fornecedor = forn."Código"
+      LEFT JOIN "Cliente" forn ON o.id_fornecedor = forn."Codigo"
       LEFT JOIN mae_usuario u ON o.usuario_cadastro = u.id_usuario
       ${whereClause}
       ORDER BY o.data_orcamento DESC, o.id_orcamento DESC
@@ -115,7 +115,7 @@ router.get('/:id', async (req, res) => {
       FROM orcamento_servico o
       INNER JOIN mae_empresa e ON o.id_empresa = e.id_empresa
       INNER JOIN "P_BOAT_1_Embarcacao" emb ON o.id_embarcacao = emb."Código"
-      LEFT JOIN "Cliente" forn ON o.id_fornecedor = forn."Código"
+      LEFT JOIN "Cliente" forn ON o.id_fornecedor = forn."Codigo"
       LEFT JOIN mae_usuario u ON o.usuario_cadastro = u.id_usuario
       WHERE o.id_orcamento = $1
     `, [id]);
