@@ -77,7 +77,7 @@ router.get('/:id/cotistas', async (req, res) => {
         a."Código" as id,
         a."Cod_Pessoa" as id_cliente,
         a."Cota_comp" as qtd_cotas,
-        a."Grupo_letra" as grupo_letra,
+        a."Gropo_letra" as grupo_letra,
         c."Cliente_Nome" as nome,
         c."Cliente_CPF" as cpf_cnpj,
         c."Cliente_Telefone_Celular" as telefone
@@ -87,7 +87,7 @@ router.get('/:id/cotistas', async (req, res) => {
         AND a."Cota_comp" > 0
         AND a."Dt_Cancelamento" IS NULL
         AND a."Dt_Desautorizacao" IS NULL
-      ORDER BY a."Grupo_letra", a."Código"
+      ORDER BY a."Gropo_letra", a."Código"
     `, [numPB]);
 
     console.log(`✅ ${cotistasResult.rows.length} cotistas encontrados`);
