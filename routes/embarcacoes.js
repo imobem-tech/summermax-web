@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
         "Modelo" as modelo
       FROM "P_BOAT_1_Embarcacao"
       WHERE id_grupo = $1
-      ORDER BY "Num_PB"
+      ORDER BY "Código"
       LIMIT 100
     `, [req.usuario.id_grupo]);
 
