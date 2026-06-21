@@ -200,7 +200,7 @@ router.get('/embarcacao/:id/cotistas', async (req, res) => {
         c."Cliente_CPF" as cpf_cnpj,
         c."Cliente_Telefone_Celular" as telefone
       FROM "P_BOAT_4_Autorizados" a
-      LEFT JOIN "Cliente" c ON a."Cod_Pessoa" = c."Código"
+      LEFT JOIN "Cliente" c ON a."Cod_Pessoa" = c."Codigo"
       WHERE a."Cod_Embarcacao" = $1
       AND a."Cota_comp" > 0
       ORDER BY a."Cota_comp" DESC
