@@ -314,9 +314,9 @@ function formatarMoeda(valor) {
 // V.2606181624
 
 // ============================================================
-// Função de filtro de embarcações - V.2606211800
+// Função de filtro de embarcações - V.2606211805
 // ============================================================
-function filtrarEmbarcacoes(origem) {
+function filtrarEmbarcacoes(abrirCombo = false) {
     const filtroCodigo = document.getElementById('filtroCodigo');
     const filtroNome = document.getElementById('filtroNome');
     const select = document.getElementById('embarcacao');
@@ -351,11 +351,11 @@ function filtrarEmbarcacoes(origem) {
 
     console.log(`🔍 Filtro aplicado: ${listaFiltrada.length} embarcações`);
 
-    // Se origem for Buscar Nome, abrir o combo
-    if (origem === 'nome' && listaFiltrada.length > 0) {
+    // Abrir combo apenas se solicitado (ao sair do campo nome)
+    if (abrirCombo && listaFiltrada.length > 0) {
         select.focus();
         select.size = Math.min(listaFiltrada.length + 1, 10); // Abrir como lista
-        setTimeout(() => { select.size = 1; }, 3000); // Fechar após 3s
+        setTimeout(() => { select.size = 1; }, 5000); // Fechar após 5s
     }
 }
 
@@ -461,12 +461,21 @@ document.addEventListener('DOMContentLoaded', () => {
         filtroNome.addEventListener('focus', () => {
             filtroCodigo.value = '';
             filtroNome.value = '';
-            filtrarEmbarcacoes('nome');
+            filtrarEmbarcacoes(false); // NÃO abrir combo ainda
         });
 
-        // Ao digitar: filtrar e abrir combo
+        // Ao digitar: apenas filtrar (NÃO abrir combo)
         filtroNome.addEventListener('input', () => {
-            filtrarEmbarcacoes('nome');
+            filtrarEmbarcacoes(false);
+        });
+
+        // Ao sair do campo: aplicar filtro E abrir combo
+        filtroNome.addEventListener('blur', () => {
+            if (filtroNome.value.trim()) {
+                setTimeout(() => {
+                    filtrarEmbarcacoes(true); // AGORA SIM abre o combo
+                }, 100);
+            }
         });
     }
 });
