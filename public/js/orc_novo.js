@@ -6,6 +6,7 @@
 let itens = [];
 let cotistas = [];
 let embarcacoes = [];
+let embarcacoesOriginal = []; // Lista completa sem filtro
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Iniciando formulário de orçamento...');
@@ -64,12 +65,18 @@ async function carregarEmbarcacoes() {
         if (!response.ok) throw new Error(`Erro ${response.status}: ${await response.text()}`);
 
         embarcacoes = await response.json();
+        embarcacoesOriginal = embarcacoes; // Salvar lista completa
         console.log(`  ✓ ${embarcacoes.length} embarcações carregadas`);
 
         select.innerHTML = '<option value="">Selecione uma embarcação...</option>';
         embarcacoes.forEach(emb => {
             // Formato: "576 - ALLMAX Z2"
-            select.innerHTML += `<option value="${emb.id}">${emb.num_pb} - ${emb.nome}</option>`;
+            const option = document.createElement('option');
+            option.value = emb.id;
+            option.textContent = `${emb.num_pb} - ${emb.nome}`;
+            option.dataset.numPb = emb.num_pb;
+            option.dataset.nome = emb.nome.toLowerCase();
+            select.appendChild(option);
         });
 
         console.log('  ✓ Select populado com sucesso');
@@ -305,3 +312,52 @@ function formatarMoeda(valor) {
 }
 
 // V.2606181624
+
+// ============================================================
+// Função de filtro de embarcações - V.2606211755
+// ============================================================
+function filtrarEmbarcacoes() {
+    const filtroCodigo = document.getElementById('filtroCodigo').value.trim();
+    const filtroNome = document.getElementById('filtroNome').value.trim().toLowerCase();
+    const select = document.getElementById('embarcacao');
+    
+    // Filtrar lista
+    let listaFiltrada = embarcacoesOriginal;
+    
+    if (filtroCodigo) {
+        listaFiltrada = listaFiltrada.filter(emb => 
+            String(emb.num_pb).includes(filtroCodigo)
+        );
+    }
+    
+    if (filtroNome) {
+        listaFiltrada = listaFiltrada.filter(emb => 
+            emb.nome.toLowerCase().includes(filtroNome)
+        );
+    }
+    
+    // Atualizar select
+    select.innerHTML = '<option value="">Selecione uma embarcação...</option>';
+    listaFiltrada.forEach(emb => {
+        const option = document.createElement('option');
+        option.value = emb.id;
+        option.textContent = `${emb.num_pb} - ${emb.nome}`;
+        select.appendChild(option);
+    });
+    
+    console.log(`🔍 Filtro aplicado: ${listaFiltrada.length} embarcações encontradas`);
+}
+
+// Adicionar event listeners para os filtros ao carregar
+document.addEventListener('DOMContentLoaded', () => {
+    const filtroCodigo = document.getElementById('filtroCodigo');
+    const filtroNome = document.getElementById('filtroNome');
+    
+    if (filtroCodigo) {
+        filtroCodigo.addEventListener('input', filtrarEmbarcacoes);
+    }
+    
+    if (filtroNome) {
+        filtroNome.addEventListener('input', filtrarEmbarcacoes);
+    }
+});

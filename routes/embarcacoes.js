@@ -96,13 +96,22 @@ router.get('/:id/cotistas', async (req, res) => {
       console.log(`  → Primeiro cotista:`, cotistasResult.rows[0]);
     }
 
+    // ✅ CÁLCULO CORRETO: usar último dígito do Gropo_letra
+    // Exemplos: 11→1 cota, 21→1 cota, 32→2 cotas, X1→1 cota, Q2→2 cotas
+    const cotistasComCotas = cotistasResult.rows.map(c => {
+      const grupoLetra = c.grupo_letra ? String(c.grupo_letra) : '0';
+      const ultimoDigito = grupoLetra.slice(-1);
+      const cotas = parseInt(ultimoDigito) || 0;
+      return { ...c, cotas_calculadas: cotas };
+    });
+
     // Calcular total de cotas
-    const totalCotas = cotistasResult.rows.reduce((sum, c) => sum + parseFloat(c.qtd_cotas || 0), 0);
+    const totalCotas = cotistasComCotas.reduce((sum, c) => sum + c.cotas_calculadas, 0);
 
     // Calcular percentual de cada cotista
-    const cotistas = cotistasResult.rows.map(c => ({
+    const cotistas = cotistasComCotas.map(c => ({
       ...c,
-      percentual: totalCotas > 0 ? (parseFloat(c.qtd_cotas) / totalCotas * 100).toFixed(2) : 0
+      percentual: totalCotas > 0 ? ((c.cotas_calculadas / totalCotas) * 100).toFixed(2) : 0
     }));
 
     res.json({

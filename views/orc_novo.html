@@ -127,7 +127,15 @@
                 <div class="form-section">
                     <h3>1. Embarcação</h3>
                     <div class="form-row">
-                        <div class="form-group" style="flex: 2;">
+                        <div class="form-group" style="width: 120px;">
+                            <label>Código PB</label>
+                            <input type="text" id="filtroCodigo" placeholder="Ex: 576" maxlength="4" style="text-align: center;">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Buscar Nome</label>
+                            <input type="text" id="filtroNome" placeholder="Digite parte do nome...">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
                             <label>Embarcação *</label>
                             <select id="embarcacao" required>
                                 <option value="">Carregando...</option>
@@ -238,10 +246,10 @@
     <script src="/js/dashboard.js"></script>
     <script src="/js/orc_novo.js"></script>
     <script>
-        // Barra de Versão - V.2606211750
+        // Barra de Versão - V.2606211755
         const VERSAO_CONFIG = {
             nomeArquivo: 'orc_novo.html',
-            versao: '2606211750'
+            versao: '2606211755'
         };
         document.getElementById('fileName').textContent = VERSAO_CONFIG.nomeArquivo;
         document.getElementById('fileVersion').textContent = `V.${VERSAO_CONFIG.versao}`;
@@ -269,4 +277,4 @@
 </body>
 </html>
 
-<!-- V.2606211750 -->
+<!-- V.2606211755 -->
