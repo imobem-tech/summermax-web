@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SUMMERMAX</title>
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>SUMMERMAX</h1>
+                <p>Sistema de Gestão de Cotas e Marina</p>
+            </div>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        autocomplete="email"
+                        placeholder="seu@email.com"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input
+                        type="password"
+                        id="senha"
+                        name="senha"
+                        required
+                        autocomplete="current-password"
+                        placeholder="••••••••"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="lembrar" name="lembrar">
+                        <span>Lembrar-me</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    Entrar
+                </button>
+
+                <div id="erro" class="erro-mensagem" style="display: none;"></div>
+            </form>
+
+            <div class="login-footer">
+                <a href="#" class="link-esqueci">Esqueci minha senha</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/login.js"></script>
+</body>
+</html>
+
+<!-- V.2606181515 -->

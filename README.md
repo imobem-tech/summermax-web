@@ -1,112 +1,144 @@
-# 🚤 SUMMERMAX WEB
+# 🚀 SISTEMA WEB SUMMERMAX
 
-Sistema de Orçamentos para Embarcações
+Sistema de Gestão de Cotas e Marina - Multi-tenant
 
-## 📋 **Descrição**
-
-Sistema web para gerenciamento de orçamentos de embarcações com:
-- Listagem de embarcações
-- Busca de cotistas por embarcação
-- Criação de orçamentos
-- Rateio automático entre cotistas
+**Versão:** V.2606181521
 
 ---
 
-## 🛠️ **Stack Tecnológica**
+## 📋 **O que foi criado:**
+
+### **Estrutura do Projeto:**
+```
+web-app/
+├── config/
+│   └── jwt.js                 # Configuração JWT
+├── db/
+│   └── connection.js          # Conexão PostgreSQL (NEON)
+├── middlewares/
+│   └── auth.js                # Autenticação e autorização
+├── routes/
+│   └── auth.js                # Rotas de login/logout
+├── public/
+│   ├── css/
+│   │   └── login.css          # Estilos da tela de login
+│   └── js/
+│       └── login.js           # JavaScript da tela de login
+├── views/
+│   └── login.html             # Tela de login
+├── server.js                  # Servidor Express
+├── .env                       # Variáveis de ambiente
+└── package.json               # Dependências
+```
+
+---
+
+## 🔧 **Tecnologias:**
 
 - **Backend:** Node.js + Express
-- **Database:** PostgreSQL (NEON)
-- **Frontend:** HTML + JavaScript (Vanilla)
-- **Deploy:** Railway
+- **Banco de Dados:** PostgreSQL (NEON Cloud)
+- **Autenticação:** JWT + bcrypt
+- **Frontend:** HTML + CSS + JavaScript (vanilla)
 
 ---
 
-## 🚀 **Deploy**
+## 🚀 **Como usar:**
 
-### **Produção:**
-- URL: https://summermax-web-production.up.railway.app
-- Branch: `main`
-
----
-
-## 📁 **Estrutura do Projeto**
-
+### **1. Instalar dependências:**
+```bash
+cd web-app
+npm install
 ```
-summermax-web/
-├── server.js              # Servidor Express
-├── package.json           # Dependências
-├── db/
-│   └── connection.js      # Conexão PostgreSQL
-├── routes/
-│   └── orc_orcamentos.js  # Rotas de orçamentos
-└── public/
-    └── orcamentos-novo.html  # Interface web
+
+### **2. Iniciar servidor:**
+```bash
+npm run dev      # Modo desenvolvimento (com auto-reload)
+npm start        # Modo produção
+```
+
+### **3. Acessar aplicação:**
+```
+http://localhost:3000
 ```
 
 ---
 
-## 🔑 **Variáveis de Ambiente**
+## 🔐 **Credenciais de Teste:**
 
-```env
-DATABASE_URL=postgresql://...
-PORT=3000
-NODE_ENV=production
-TZ=America/Sao_Paulo
-```
+**Email:** diniz.novello@yahoo.com.br  
+**Senha:** Agosto197104@
 
 ---
 
-## 🐛 **Correções Aplicadas (V.2606211555)**
+## 📡 **API Endpoints:**
 
-### **1. Relacionamento de Cotistas Corrigido:**
-```sql
--- ❌ ERRADO (antes):
-WHERE embarcacao."Código" = $1
+### **Autenticação:**
 
--- ✅ CORRETO (agora):
-WHERE a."Cod_Embarcacao" = $1  -- Usa Num_PB
+#### `POST /api/auth/login`
+Login do usuário
+```json
+{
+  "email": "usuario@exemplo.com",
+  "senha": "senha123"
+}
 ```
 
-**Relacionamento:**
-```
-P_BOAT_1_Embarcacao.Num_PB = P_BOAT_4_Autorizados.Cod_Embarcacao
-P_BOAT_4_Autorizados.Cod_Pessoa = Cliente.Código
+**Resposta:**
+```json
+{
+  "sucesso": true,
+  "usuario": {
+    "id_usuario": 1,
+    "nome": "Admin SUMMERMAX",
+    "email": "diniz.novello@yahoo.com.br",
+    "nivel_acesso": "MASTER_GRUPO",
+    "primeiro_acesso": true,
+    "grupo": "SUMMERMAX",
+    "empresa": null
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
 ```
 
-### **2. Erro "forn.Nome does not exist" Corrigido:**
-```sql
--- Removido alias "forn" inexistente
--- Query de orçamentos simplificada
-```
+#### `POST /api/auth/logout`
+Logout do usuário (requer autenticação)
 
-### **3. Barra de Versionamento Adicionada:**
-- Mostra nome do arquivo e versão (yymmddhhnn)
-- Status da API em tempo real (verde/vermelho)
-- Debug completo no console
+#### `GET /api/auth/me`
+Dados do usuário logado (requer autenticação)
 
 ---
 
-## 📊 **API Endpoints**
+## 🛡️ **Níveis de Acesso:**
 
-### **Embarcações:**
-```
-GET /api/orcamentos/embarcacoes
-GET /api/orcamentos/embarcacao/:num_pb
-```
-
-### **Cotistas:**
-```
-GET /api/orcamentos/embarcacao/:num_pb/cotistas
-```
-
-### **Orçamentos:**
-```
-GET /api/orcamentos
-POST /api/orcamentos
-```
+1. **SUPER_ADMIN** - Acesso total ao sistema
+2. **MASTER_GRUPO** - Acesso a todas empresas do grupo
+3. **ADMIN_EMPRESA** - Admin da sua empresa
+4. **OPERADOR** - Uso diário
+5. **FINANCEIRO** - Só financeiro
+6. **CONSULTA** - Só visualização
 
 ---
 
-## 👨‍💻 **Desenvolvido por:**
+## 📊 **Próximos Passos:**
 
-ALLMAX - 2026
+- [ ] Criar tela de Dashboard
+- [ ] Implementar menu dinâmico
+- [ ] CRUD de Clientes
+- [ ] CRUD de Embarcações
+- [ ] CRUD de Orçamentos
+- [ ] Tela de Contas a Receber
+- [ ] Integração com Asaas
+- [ ] Envio de WhatsApp
+
+---
+
+## 📝 **Notas:**
+
+- Todos os arquivos têm versão no formato **V.yymmddhhnn**
+- Arquivos de orçamento usam prefixo **orc_**
+- Timezone: **America/Sao_Paulo (GMT-3)**
+- Token JWT expira em **24 horas**
+
+---
+
+**V.2606181521**

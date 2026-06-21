@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SUMMERMAX</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <h1 class="logo">SUMMERMAX</h1>
+        </div>
+        <div class="header-right">
+            <span id="nomeUsuario" class="user-name">Carregando...</span>
+            <button id="btnLogout" class="btn-logout">Sair</button>
+        </div>
+    </header>
+
+    <!-- Container Principal -->
+    <div class="main-container">
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <nav class="menu">
+                <a href="/dashboard.html" class="menu-item active">
+                    📊 Dashboard
+                </a>
+                <div class="menu-section">Cadastros</div>
+                <a href="/clientes.html" class="menu-item">
+                    👥 Clientes
+                </a>
+                <a href="/embarcacoes.html" class="menu-item">
+                    🚤 Embarcações
+                </a>
+                <a href="/fornecedores.html" class="menu-item">
+                    🚚 Fornecedores
+                </a>
+
+                <div class="menu-section">Operacional</div>
+                <a href="/orcamentos.html" class="menu-item">
+                    📝 Orçamentos
+                </a>
+
+                <div class="menu-section">Financeiro</div>
+                <a href="/contas-receber.html" class="menu-item">
+                    💰 Contas a Receber
+                </a>
+
+                <div class="menu-section">Configurações</div>
+                <a href="/usuarios.html" class="menu-item">
+                    👤 Usuários
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="content">
+            <div class="page-header">
+                <h2>Dashboard</h2>
+                <p class="subtitle">Visão geral do sistema</p>
+            </div>
+
+            <!-- Cards de Resumo -->
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">👥</div>
+                    <div class="card-content">
+                        <h3>Clientes</h3>
+                        <p class="card-number" id="totalClientes">-</p>
+                        <span class="card-label">cadastrados</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">🚤</div>
+                    <div class="card-content">
+                        <h3>Embarcações</h3>
+                        <p class="card-number" id="totalEmbarcacoes">-</p>
+                        <span class="card-label">cadastradas</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">📝</div>
+                    <div class="card-content">
+                        <h3>Orçamentos</h3>
+                        <p class="card-number" id="totalOrcamentos">-</p>
+                        <span class="card-label">em aberto</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">💰</div>
+                    <div class="card-content">
+                        <h3>Contas a Receber</h3>
+                        <p class="card-number" id="totalContasReceber">-</p>
+                        <span class="card-label">pendentes</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informações do Usuário -->
+            <div class="info-section">
+                <div class="info-card">
+                    <h3>Bem-vindo(a)!</h3>
+                    <div class="user-info">
+                        <p><strong>Nome:</strong> <span id="infoNome">-</span></p>
+                        <p><strong>Email:</strong> <span id="infoEmail">-</span></p>
+                        <p><strong>Nível de Acesso:</strong> <span id="infoNivel">-</span></p>
+                        <p><strong>Grupo:</strong> <span id="infoGrupo">-</span></p>
+                        <p><strong>Empresa:</strong> <span id="infoEmpresa">-</span></p>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>Sistema</h3>
+                    <div class="system-info">
+                        <p><strong>Versão:</strong> 1.0.0</p>
+                        <p><strong>Ambiente:</strong> Production</p>
+                        <p><strong>Banco:</strong> PostgreSQL (NEON)</p>
+                        <p><strong>Timezone:</strong> America/Sao_Paulo (GMT-3)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Próximos Passos -->
+            <div class="next-steps">
+                <h3>🚀 Próximos Módulos:</h3>
+                <ul>
+                    <li>✅ Sistema de Login</li>
+                    <li>✅ Dashboard</li>
+                    <li>⏳ CRUD de Clientes</li>
+                    <li>⏳ CRUD de Embarcações</li>
+                    <li>⏳ CRUD de Orçamentos</li>
+                    <li>⏳ Contas a Receber</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
+
+<!-- V.2606181540 -->
