@@ -1,0 +1,20 @@
+{
+  "name": "summermax-web",
+  "version": "1.0.0",
+  "description": "Sistema Web SUMMERMAX - Orçamentos",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["summermax", "orcamentos", "embarcacoes"],
+  "author": "ALLMAX",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.11.3",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5"
+  }
+}
