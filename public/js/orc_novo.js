@@ -314,50 +314,159 @@ function formatarMoeda(valor) {
 // V.2606181624
 
 // ============================================================
-// Função de filtro de embarcações - V.2606211755
+// Função de filtro de embarcações - V.2606211800
 // ============================================================
-function filtrarEmbarcacoes() {
-    const filtroCodigo = document.getElementById('filtroCodigo').value.trim();
-    const filtroNome = document.getElementById('filtroNome').value.trim().toLowerCase();
+function filtrarEmbarcacoes(origem) {
+    const filtroCodigo = document.getElementById('filtroCodigo');
+    const filtroNome = document.getElementById('filtroNome');
     const select = document.getElementById('embarcacao');
-    
-    // Filtrar lista
+
+    const valorCodigo = filtroCodigo.value.trim();
+    const valorNome = filtroNome.value.trim().toLowerCase();
+
+    // Filtrar lista (busca parcial)
     let listaFiltrada = embarcacoesOriginal;
-    
-    if (filtroCodigo) {
-        listaFiltrada = listaFiltrada.filter(emb => 
-            String(emb.num_pb).includes(filtroCodigo)
+
+    if (valorCodigo) {
+        listaFiltrada = listaFiltrada.filter(emb =>
+            String(emb.num_pb).includes(valorCodigo)
         );
     }
-    
-    if (filtroNome) {
-        listaFiltrada = listaFiltrada.filter(emb => 
-            emb.nome.toLowerCase().includes(filtroNome)
+
+    if (valorNome) {
+        listaFiltrada = listaFiltrada.filter(emb =>
+            emb.nome.toLowerCase().includes(valorNome)
         );
     }
-    
+
     // Atualizar select
-    select.innerHTML = '<option value="">Selecione uma embarcação...</option>';
+    select.innerHTML = '<option value="">Selecione...</option>';
     listaFiltrada.forEach(emb => {
         const option = document.createElement('option');
         option.value = emb.id;
         option.textContent = `${emb.num_pb} - ${emb.nome}`;
+        option.dataset.numPb = emb.num_pb;
         select.appendChild(option);
     });
-    
-    console.log(`🔍 Filtro aplicado: ${listaFiltrada.length} embarcações encontradas`);
+
+    console.log(`🔍 Filtro aplicado: ${listaFiltrada.length} embarcações`);
+
+    // Se origem for Buscar Nome, abrir o combo
+    if (origem === 'nome' && listaFiltrada.length > 0) {
+        select.focus();
+        select.size = Math.min(listaFiltrada.length + 1, 10); // Abrir como lista
+        setTimeout(() => { select.size = 1; }, 3000); // Fechar após 3s
+    }
 }
 
-// Adicionar event listeners para os filtros ao carregar
+// Buscar embarcação por código e carregar cotistas direto
+async function buscarPorCodigo() {
+    const filtroCodigo = document.getElementById('filtroCodigo');
+    const valorCodigo = filtroCodigo.value.trim();
+
+    if (!valorCodigo) return;
+
+    // Buscar embarcação com esse Num_PB
+    const embarcacao = embarcacoesOriginal.find(emb =>
+        String(emb.num_pb) === valorCodigo
+    );
+
+    if (embarcacao) {
+        console.log(`✅ Embarcação ${valorCodigo} encontrada, carregando cotistas...`);
+
+        // Selecionar no combo (sem triggerar o evento)
+        const select = document.getElementById('embarcacao');
+        select.value = embarcacao.id;
+
+        // Carregar cotistas direto
+        await carregarCotistasPorId(embarcacao.id);
+    } else {
+        console.log(`⚠️ Embarcação ${valorCodigo} não encontrada`);
+    }
+}
+
+// Função auxiliar para carregar cotistas por ID
+async function carregarCotistasPorId(idEmbarcacao) {
+    if (!idEmbarcacao) {
+        document.getElementById('cotistasSection').style.display = 'none';
+        cotistas = [];
+        return;
+    }
+
+    try {
+        const url = `/api/embarcacoes/${idEmbarcacao}/cotistas`;
+        console.log('👥 Carregando cotistas:', url);
+
+        const response = await fetch(url, { credentials: 'include' });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Erro ${response.status}: ${errorText}`);
+        }
+
+        const data = await response.json();
+        cotistas = data.cotistas || [];
+        console.log(`✅ ${cotistas.length} cotistas encontrados`);
+
+        const lista = document.getElementById('listaCotistas');
+        if (cotistas.length === 0) {
+            lista.innerHTML = '<p style="color: #666; padding: 12px;">⚠️ Nenhum cotista encontrado</p>';
+        } else {
+            lista.innerHTML = cotistas.map(c => `
+                <div class="cotista-card">
+                    <div class="nome">${c.nome || 'Nome não disponível'}</div>
+                    <div class="info">Grupo: ${c.grupo_letra || 'N/A'} • ${c.percentual}%</div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('cotistasSection').style.display = 'block';
+
+    } catch (err) {
+        console.error('❌ Erro ao carregar cotistas:', err);
+        alert(`Erro: ${err.message}`);
+    }
+}
+
+// Event listeners para os filtros
 document.addEventListener('DOMContentLoaded', () => {
     const filtroCodigo = document.getElementById('filtroCodigo');
     const filtroNome = document.getElementById('filtroNome');
-    
+
     if (filtroCodigo) {
-        filtroCodigo.addEventListener('input', filtrarEmbarcacoes);
+        // Ao focar no campo Embarcação: limpar ambos os campos
+        filtroCodigo.addEventListener('focus', () => {
+            filtroCodigo.value = '';
+            filtroNome.value = '';
+            filtrarEmbarcacoes('codigo');
+        });
+
+        // Ao digitar: filtrar
+        filtroCodigo.addEventListener('input', () => {
+            filtrarEmbarcacoes('codigo');
+        });
+
+        // Ao sair (blur) ou Enter: buscar e carregar cotistas
+        filtroCodigo.addEventListener('blur', buscarPorCodigo);
+        filtroCodigo.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                buscarPorCodigo();
+            }
+        });
     }
-    
+
     if (filtroNome) {
-        filtroNome.addEventListener('input', filtrarEmbarcacoes);
+        // Ao focar no Buscar Nome: limpar ambos os campos
+        filtroNome.addEventListener('focus', () => {
+            filtroCodigo.value = '';
+            filtroNome.value = '';
+            filtrarEmbarcacoes('nome');
+        });
+
+        // Ao digitar: filtrar e abrir combo
+        filtroNome.addEventListener('input', () => {
+            filtrarEmbarcacoes('nome');
+        });
     }
 });
