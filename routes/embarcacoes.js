@@ -47,6 +47,9 @@ router.get('/:id/cotistas', async (req, res) => {
 
     console.log(`🔍 Buscando cotistas para embarcação ID: ${id}`);
 
+    // Debug: Log do ID recebido
+    console.log(`  → Tipo do ID: ${typeof id}, Valor: "${id}"`);
+
     // Buscar embarcação
     const embResult = await query(`
       SELECT "Código", "Nome_Embar", "Num_PB", "Cod_Cliente"
@@ -89,6 +92,11 @@ router.get('/:id/cotistas', async (req, res) => {
 
     console.log(`✅ ${cotistasResult.rows.length} cotistas encontrados`);
 
+    // Debug: Mostrar primeiro cotista se houver
+    if (cotistasResult.rows.length > 0) {
+      console.log(`  → Primeiro cotista:`, cotistasResult.rows[0]);
+    }
+
     // Calcular total de cotas
     const totalCotas = cotistasResult.rows.reduce((sum, c) => sum + parseFloat(c.qtd_cotas || 0), 0);
 
@@ -106,7 +114,12 @@ router.get('/:id/cotistas', async (req, res) => {
 
   } catch (err) {
     console.error('❌ Erro ao buscar cotistas:', err);
-    res.status(500).json({ erro: 'Erro ao buscar cotistas' });
+    console.error('  → Stack:', err.stack);
+    console.error('  → Message:', err.message);
+    res.status(500).json({
+      erro: 'Erro ao buscar cotistas',
+      detalhes: err.message
+    });
   }
 });
 
