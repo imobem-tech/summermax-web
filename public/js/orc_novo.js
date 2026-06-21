@@ -68,7 +68,8 @@ async function carregarEmbarcacoes() {
 
         select.innerHTML = '<option value="">Selecione uma embarcação...</option>';
         embarcacoes.forEach(emb => {
-            select.innerHTML += `<option value="${emb.id}">${emb.nome} - PB${emb.num_pb}</option>`;
+            // Formato: "576 - ALLMAX Z2"
+            select.innerHTML += `<option value="${emb.id}">${emb.num_pb} - ${emb.nome}</option>`;
         });
 
         console.log('  ✓ Select populado com sucesso');
@@ -132,7 +133,7 @@ async function carregarCotistas() {
             lista.innerHTML = cotistas.map(c => `
                 <div class="cotista-card">
                     <div class="nome">${c.nome || 'Nome não disponível'}</div>
-                    <div class="info">Cotas: ${c.qtd_cotas} (${c.percentual}%)</div>
+                    <div class="info">Grupo: ${c.grupo_letra || 'N/A'} • ${c.percentual}%</div>
                 </div>
             `).join('');
         }

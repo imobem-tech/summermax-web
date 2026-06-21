@@ -66,11 +66,15 @@ router.get('/:id/cotistas', async (req, res) => {
     // ✅ RELACIONAMENTO CORRETO:
     // P_BOAT_1_Embarcacao.Num_PB = P_BOAT_4_Autorizados.Cod_Embarcacao
     // P_BOAT_4_Autorizados.Cod_Pessoa = Cliente.Codigo (SEM acento)
+    // ✅ FILTROS:
+    // - Excluir cotistas com Dt_Cancelamento ou Dt_Desautorizacao preenchidos
+    // - Mostrar Grupo_letra em vez de Cota_comp
     const cotistasResult = await query(`
       SELECT
         a."Código" as id,
         a."Cod_Pessoa" as id_cliente,
         a."Cota_comp" as qtd_cotas,
+        a."Grupo_letra" as grupo_letra,
         c."Cliente_Nome" as nome,
         c."Cliente_CPF" as cpf_cnpj,
         c."Cliente_Telefone_Celular" as telefone
@@ -78,7 +82,9 @@ router.get('/:id/cotistas', async (req, res) => {
       LEFT JOIN "Cliente" c ON a."Cod_Pessoa" = c."Codigo"
       WHERE a."Cod_Embarcacao" = $1
         AND a."Cota_comp" > 0
-      ORDER BY a."Cota_comp" DESC
+        AND a."Dt_Cancelamento" IS NULL
+        AND a."Dt_Desautorizacao" IS NULL
+      ORDER BY a."Grupo_letra", a."Código"
     `, [numPB]);
 
     console.log(`✅ ${cotistasResult.rows.length} cotistas encontrados`);
