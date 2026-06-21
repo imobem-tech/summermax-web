@@ -104,7 +104,7 @@ async function carregarCotistas() {
     }
 
     try {
-        const url = `/api/orcamentos/embarcacao/${idEmbarcacao}/cotistas`;
+        const url = `/api/embarcacoes/${idEmbarcacao}/cotistas`;
         console.log('  → URL:', url);
 
         const response = await fetch(url, {
