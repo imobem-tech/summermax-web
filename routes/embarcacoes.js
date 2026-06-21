@@ -26,7 +26,6 @@ router.get('/', async (req, res) => {
       FROM "P_BOAT_1_Embarcacao"
       WHERE id_grupo = $1
       ORDER BY "Código"
-      LIMIT 100
     `, [req.usuario.id_grupo]);
 
     res.json(result.rows);
