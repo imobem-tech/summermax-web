@@ -68,14 +68,17 @@ async function carregarEmbarcacoes() {
         embarcacoesOriginal = embarcacoes; // Salvar lista completa
         console.log(`  ✓ ${embarcacoes.length} embarcações carregadas`);
 
+        // Inicializar filtros APÓS carregar a lista
+        inicializarFiltros();
+
         select.innerHTML = '<option value="">Selecione uma embarcação...</option>';
         embarcacoes.forEach(emb => {
             // Formato: "576 - ALLMAX Z2"
             const option = document.createElement('option');
             option.value = emb.id;
-            option.textContent = `${emb.num_pb} - ${emb.nome}`;
+            option.textContent = `${emb.num_pb} - ${emb.nome || 'SEM NOME'}`;
             option.dataset.numPb = emb.num_pb;
-            option.dataset.nome = emb.nome.toLowerCase();
+            option.dataset.nome = (emb.nome || '').toLowerCase();
             select.appendChild(option);
         });
 
@@ -335,7 +338,7 @@ function filtrarEmbarcacoes(abrirCombo = false) {
 
     if (valorNome) {
         listaFiltrada = listaFiltrada.filter(emb =>
-            emb.nome.toLowerCase().includes(valorNome)
+            (emb.nome || '').toLowerCase().includes(valorNome)
         );
     }
 
@@ -428,8 +431,8 @@ async function carregarCotistasPorId(idEmbarcacao) {
     }
 }
 
-// Event listeners para os filtros
-document.addEventListener('DOMContentLoaded', () => {
+// Inicializar event listeners dos filtros APÓS carregar embarcações
+function inicializarFiltros() {
     const filtroCodigo = document.getElementById('filtroCodigo');
     const filtroNome = document.getElementById('filtroNome');
 
@@ -438,12 +441,16 @@ document.addEventListener('DOMContentLoaded', () => {
         filtroCodigo.addEventListener('focus', () => {
             filtroCodigo.value = '';
             filtroNome.value = '';
-            filtrarEmbarcacoes('codigo');
+            if (embarcacoesOriginal.length > 0) {
+                filtrarEmbarcacoes(false);
+            }
         });
 
         // Ao digitar: filtrar
         filtroCodigo.addEventListener('input', () => {
-            filtrarEmbarcacoes('codigo');
+            if (embarcacoesOriginal.length > 0) {
+                filtrarEmbarcacoes(false);
+            }
         });
 
         // Ao sair (blur) ou Enter: buscar e carregar cotistas
@@ -461,21 +468,27 @@ document.addEventListener('DOMContentLoaded', () => {
         filtroNome.addEventListener('focus', () => {
             filtroCodigo.value = '';
             filtroNome.value = '';
-            filtrarEmbarcacoes(false); // NÃO abrir combo ainda
+            if (embarcacoesOriginal.length > 0) {
+                filtrarEmbarcacoes(false); // NÃO abrir combo ainda
+            }
         });
 
         // Ao digitar: apenas filtrar (NÃO abrir combo)
         filtroNome.addEventListener('input', () => {
-            filtrarEmbarcacoes(false);
+            if (embarcacoesOriginal.length > 0) {
+                filtrarEmbarcacoes(false);
+            }
         });
 
         // Ao sair do campo: aplicar filtro E abrir combo
         filtroNome.addEventListener('blur', () => {
-            if (filtroNome.value.trim()) {
+            if (filtroNome.value.trim() && embarcacoesOriginal.length > 0) {
                 setTimeout(() => {
                     filtrarEmbarcacoes(true); // AGORA SIM abre o combo
                 }, 100);
             }
         });
     }
-});
+
+    console.log('✅ Filtros inicializados');
+}
