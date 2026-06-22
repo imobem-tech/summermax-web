@@ -1,4 +1,34 @@
 // ============================================================
+// ⚠️ BACKUP: 2606221705_orc_novo.js
+// Data do backup: 22/06/2026 17:05
+// Arquivo original: C:\Users\NOTEBOOK\projetos\summermax-web\public\js\orc_novo.js — V.2606221705
+// ============================================================
+//
+// MOTIVO DO BACKUP:
+// Corrigir bug de cursor pulando e problema ao salvar orçamento
+//
+// PROBLEMA RESOLVIDO:
+// 1. Cursor saltava do campo ao digitar quantidade/valor unitário
+//    - Causa: renderizarItens() recriava todo HTML a cada digitação
+// 2. Erro "preencha esse campo" ao salvar sem fornecedor
+//    - Validação HTML5 ou fornecedor não sendo enviado como null
+//
+// FUNÇÕES ALTERADAS:
+// - renderizarItens(): removido chamada renderizarItens() recursiva
+//   - Agora atualiza apenas o campo Total via querySelector
+//   - Preserva o foco no campo sendo digitado
+// - salvarOrcamento(): ajustada validação de fornecedor
+//   - Garante envio de null quando vazio
+//   - Adicionado console.log para debug
+//
+// SOLUÇÃO:
+// 1. Campo quantidade/valor: atualiza apenas campo-total (sem re-render)
+// 2. Fornecedor: parseInt só se tiver valor, senão null
+// 3. Observação e taxa: valores default vazios/20
+//
+// ============================================================
+
+// ============================================================
 // SCRIPT - NOVO ORÇAMENTO
 // V.2606221705
 // ============================================================
