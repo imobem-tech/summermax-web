@@ -1,4 +1,32 @@
 // ============================================================
+// ⚠️ BACKUP: 2606221645_orc_novo.js
+// Data do backup: 22/06/2026 16:45
+// Arquivo original: C:\Users\NOTEBOOK\projetos\summermax-web\public\js\orc_novo.js — V.2606221645
+// ============================================================
+//
+// MOTIVO DO BACKUP:
+// Simplificação do formulário de orçamento - removendo campos de pagamento/parcelamento
+//
+// PROBLEMA RESOLVIDO:
+// - Formulário continha campos de forma_pagamento, parcelas e dias_vencimento
+// - Esses campos devem ser definidos DEPOIS, na etapa de geração de boletos
+// - Campo "descricao" foi renomeado para "titulo" para melhor semântica
+//
+// FUNÇÕES ALTERADAS:
+// - calcularResumo(): removido cálculo de valor_parcela e qtdParcelas
+// - salvarOrcamento(): removido envio de forma_pagamento, qtd_parcelas, dias_vencimento
+// - salvarOrcamento(): mudado campo "descricao" para "titulo"
+// - Event listeners: removido listener de qtdParcelas
+//
+// SOLUÇÃO:
+// - Formulário simplificado: apenas embarcação, título, itens, taxa e resumo
+// - Resumo mostra apenas: Valor Serviços, Taxa, Total (sem parcelas)
+// - Campos de pagamento serão implementados na próxima fase (geração de cobranças)
+// - Status salvo como RASCUNHO
+//
+// ============================================================
+
+// ============================================================
 // SCRIPT - NOVO ORÇAMENTO
 // V.2606221645
 // ============================================================
