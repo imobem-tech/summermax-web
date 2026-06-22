@@ -1,4 +1,38 @@
 // ============================================================
+// ⚠️ BACKUP: 2606221725_orc_novo.js
+// Data do backup: 22/06/2026 17:25
+// Arquivo original: C:\Users\NOTEBOOK\projetos\summermax-web\public\js\orc_novo.js — V.2606221725
+// ============================================================
+//
+// MOTIVO DO BACKUP:
+// Corrigir validação de embarcação e campo required em itens vazios
+//
+// PROBLEMA RESOLVIDO:
+// 1. Campo Descrição com required bloqueava submit quando havia item vazio
+//    - Usuário adiciona Item 1 → clica "Adicionar Item" → Item 2 vazio
+//    - HTML5 exigia preenchimento do Item 2 mesmo vazio
+// 2. Embarcação selecionada via código mas select filtrado não tinha o value
+//    - buscarPorCodigo() seta select.value mas filtro pode limpar options
+//    - Validação pegava select.value vazio mesmo com cotistas carregados
+//
+// FUNÇÕES ALTERADAS:
+// - renderizarItens(): removido atributo required do input de descrição
+// - Nova variável global: embarcacaoSelecionadaId
+// - carregarCotistas(): salva embarcacaoSelecionadaId
+// - buscarPorCodigo(): salva embarcacaoSelecionadaId
+// - carregarCotistasPorId(): salva embarcacaoSelecionadaId
+// - salvarOrcamento(): usa embarcacaoSelecionadaId ao invés de select.value
+// - salvarOrcamento(): filtra itens preenchidos (ignora vazios)
+//
+// SOLUÇÃO:
+// 1. Campo descrição SEM required → valida no JS
+// 2. Variável global embarcacaoSelecionadaId mantém ID mesmo com select filtrado
+// 3. Envia apenas itens com descrição preenchida
+// 4. Logs detalhados para debug
+//
+// ============================================================
+
+// ============================================================
 // SCRIPT - NOVO ORÇAMENTO
 // V.2606221725
 // ============================================================
