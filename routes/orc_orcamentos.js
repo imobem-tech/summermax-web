@@ -201,10 +201,10 @@ router.get('/:id', async (req, res) => {
     const rateiosResult = await query(`
       SELECT
         r.*,
-        c."Nome" as nome_cliente,
-        c."CPF_CNPJ" as cpf_cliente
+        c."Cliente_Nome" as nome_cliente,
+        c."Cliente_CPF" as cpf_cliente
       FROM orcamento_rateio r
-      INNER JOIN "Cliente" c ON r.id_cliente = c."ID"
+      LEFT JOIN "Cliente" c ON r.id_cliente = c."Codigo"
       WHERE r.id_orcamento = $1
       ORDER BY r.id_cliente
     `, [id]);
