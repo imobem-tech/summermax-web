@@ -145,8 +145,55 @@ function verOrcamento(id) {
     window.location.href = `/orcamentos-ver.html?id=${id}`;
 }
 
-function editarOrcamento(id) {
-    window.location.href = `/orcamentos-editar.html?id=${id}`;
+async function editarOrcamento(id) {
+    console.log('✏️ Editando orçamento:', id);
+
+    try {
+        // Buscar dados do orçamento
+        const response = await fetch(`/api/orcamentos/${id}`, {
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro ${response.status}`);
+        }
+
+        const orc = await response.json();
+
+        // Carregar modal HTML (se não estiver carregado)
+        await carregarModalRateio();
+
+        // Abrir modal de rateio
+        await abrirModalRateio(id, orc.numero);
+
+    } catch (err) {
+        console.error('❌ Erro ao editar:', err);
+        alert('Erro ao abrir orçamento para edição');
+    }
+}
+
+// Carregar modal de rateio (mesma função do orc_novo.js)
+async function carregarModalRateio() {
+    const container = document.getElementById('modalRateioContainer');
+    if (container && container.innerHTML) {
+        return; // Já carregado
+    }
+
+    try {
+        const response = await fetch('/orc_rateio_modal.html');
+        const html = await response.text();
+        if (container) {
+            container.innerHTML = html;
+        } else {
+            // Criar container se não existir
+            const div = document.createElement('div');
+            div.id = 'modalRateioContainer';
+            div.innerHTML = html;
+            document.body.appendChild(div);
+        }
+    } catch (err) {
+        console.error('❌ Erro ao carregar modal:', err);
+    }
 }
 
 function formatarData(data) {

@@ -22,10 +22,11 @@
 .modal-rateio {
     background: white;
     border-radius: 8px;
-    width: 90%;
-    max-width: 900px;
+    width: 95%;
+    max-width: 1200px;
     max-height: 90vh;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     animation: slideDown 0.3s ease;
 }
@@ -116,12 +117,37 @@
     color: #667eea;
 }
 
+/* Conteúdo Principal (2 colunas) */
+.modal-body-rateio {
+    display: flex;
+    gap: 24px;
+    padding: 20px 24px;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Coluna Esquerda (Tabela) */
+.rateio-left {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Coluna Direita (Resumo + Botões) */
+.rateio-right {
+    flex: 0 0 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 /* Tabela */
 .rateio-table-container {
-    padding: 0 24px;
-    margin: 20px 0;
-    max-height: 300px;
+    flex: 1;
     overflow-y: auto;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
 }
 
 .rateio-table {
@@ -243,10 +269,10 @@
 /* Resumo */
 .rateio-resumo {
     background: #f8f9fa;
-    padding: 20px 24px;
-    margin: 0 24px 20px 24px;
+    padding: 16px;
     border-radius: 6px;
     border: 2px solid #e9ecef;
+    flex-shrink: 0;
 }
 
 .rateio-resumo h4 {
@@ -293,25 +319,24 @@
 .status-warning { color: #ffc107; font-weight: 600; }
 .status-error { color: #dc3545; font-weight: 600; }
 
-/* Ações */
+/* Ações na direita */
 .modal-actions {
     display: flex;
-    gap: 12px;
-    padding: 20px 24px;
-    border-top: 2px solid #e9ecef;
-    background: #f8f9fa;
-    border-radius: 0 0 8px 8px;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
 }
 
 .modal-actions button {
-    flex: 1;
-    padding: 12px 20px;
+    width: 100%;
+    padding: 12px 16px;
     border: none;
     border-radius: 6px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
 }
 
 .btn-secondary {

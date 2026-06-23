@@ -27,66 +27,75 @@
             <strong id="rateioValorTotal">R$ 0,00</strong>
         </div>
 
-        <!-- Tabela de Cotistas -->
-        <div class="rateio-table-container">
-            <table class="rateio-table">
-                <thead>
-                    <tr>
-                        <th style="width: 50px;">
-                            <input type="checkbox" id="checkTodos" title="Marcar/Desmarcar todos">
-                        </th>
-                        <th style="width: 250px;">Cotista</th>
-                        <th style="width: 80px;">Grupo</th>
-                        <th style="width: 120px;">Cotas (%)</th>
-                        <th style="width: 150px;">Valor</th>
-                        <th style="width: 60px;">Ação</th>
-                    </tr>
-                </thead>
-                <tbody id="rateioCotistasBody">
-                    <!-- Linhas serão inseridas via JavaScript -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Resumo Financeiro -->
-        <div class="rateio-resumo">
-            <h4>💰 RESUMO</h4>
-            <div class="resumo-content">
-                <div class="resumo-linha">
-                    <span>Valor do Orçamento:</span>
-                    <strong id="resumoOrcamento">R$ 0,00</strong>
-                </div>
-                <div class="resumo-linha">
-                    <span>Total Distribuído:</span>
-                    <strong id="resumoDistribuido">R$ 0,00</strong>
-                    <span id="statusDistribuido"></span>
-                </div>
-                <div class="resumo-linha divisor">
-                    <span>Diferença:</span>
-                    <strong id="resumoDiferenca">R$ 0,00</strong>
-                    <span id="statusDiferenca"></span>
-                </div>
-                <div class="resumo-linha">
-                    <span>Cotistas Selecionados:</span>
-                    <strong id="resumoCotistas">0 de 0</strong>
+        <!-- Corpo Principal (2 colunas) -->
+        <div class="modal-body-rateio">
+            <!-- Coluna Esquerda: Tabela -->
+            <div class="rateio-left">
+                <h4 style="margin: 0 0 12px 0;">👥 Cotistas</h4>
+                <div class="rateio-table-container">
+                    <table class="rateio-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">
+                                    <input type="checkbox" id="checkTodos" title="Marcar/Desmarcar todos">
+                                </th>
+                                <th style="width: 250px;">Cotista</th>
+                                <th style="width: 80px;">Grupo</th>
+                                <th style="width: 120px;">Cotas (%)</th>
+                                <th style="width: 150px;">Valor</th>
+                                <th style="width: 60px;">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rateioCotistasBody">
+                            <!-- Linhas serão inseridas via JavaScript -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </div>
 
-        <!-- Ações -->
-        <div class="modal-actions">
-            <button type="button" class="btn-secondary" id="btnCancelarRateio">
-                ← Fechar
-            </button>
-            <button type="button" class="btn-primary" id="btnSalvarRateio">
-                💾 Salvar Rateio
-            </button>
-            <button type="button" class="btn-success" id="btnAprovarRateio">
-                ✅ Aprovar
-            </button>
-            <button type="button" class="btn-info" id="btnGerarCobrancas" disabled>
-                💳 Gerar Cobranças →
-            </button>
+            <!-- Coluna Direita: Resumo + Botões -->
+            <div class="rateio-right">
+                <!-- Resumo Financeiro -->
+                <div class="rateio-resumo">
+                    <h4>💰 RESUMO</h4>
+                    <div class="resumo-content">
+                        <div class="resumo-linha">
+                            <span>Orçamento:</span>
+                            <strong id="resumoOrcamento">R$ 0,00</strong>
+                        </div>
+                        <div class="resumo-linha">
+                            <span>Distribuído:</span>
+                            <strong id="resumoDistribuido">R$ 0,00</strong>
+                            <span id="statusDistribuido"></span>
+                        </div>
+                        <div class="resumo-linha divisor">
+                            <span>Diferença:</span>
+                            <strong id="resumoDiferenca">R$ 0,00</strong>
+                            <span id="statusDiferenca"></span>
+                        </div>
+                        <div class="resumo-linha">
+                            <span>Cotistas:</span>
+                            <strong id="resumoCotistas">0 de 0</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ações -->
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="btnCancelarRateio">
+                        ← Fechar
+                    </button>
+                    <button type="button" class="btn-primary" id="btnSalvarRateio">
+                        💾 Salvar Rateio
+                    </button>
+                    <button type="button" class="btn-success" id="btnAprovarRateio">
+                        ✅ Aprovar
+                    </button>
+                    <button type="button" class="btn-info" id="btnGerarCobrancas" disabled>
+                        💳 Gerar Cobranças →
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
