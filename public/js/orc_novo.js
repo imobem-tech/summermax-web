@@ -223,11 +223,16 @@ function renderizarItens() {
     `).join('');
 
     // Adicionar event listeners
-    container.querySelectorAll('input[data-item]').forEach(input => {
+    const inputs = container.querySelectorAll('input[data-item]');
+    console.log(`🔗 Anexando ${inputs.length} event listeners aos itens...`);
+
+    inputs.forEach(input => {
         input.addEventListener('input', (e) => {
             const id = parseInt(e.target.dataset.item);
             const field = e.target.dataset.field;
             const valor = e.target.value;
+
+            console.log(`  → Item ${id}, campo: ${field}, valor: ${valor}`);
 
             const item = itens.find(i => i.id === id);
             if (item) {
@@ -236,11 +241,13 @@ function renderizarItens() {
                 // Recalcular total do item
                 if (field === 'quantidade' || field === 'valor_unitario') {
                     item.valor_total = item.quantidade * item.valor_unitario;
+                    console.log(`  💰 Total recalculado: R$ ${item.valor_total}`);
 
                     // ✅ Atualizar apenas o campo Total (sem re-renderizar tudo)
                     const campoTotal = document.querySelector(`input[data-item-total="${item.id}"]`);
                     if (campoTotal) {
                         campoTotal.value = formatarMoeda(item.valor_total);
+                        console.log(`  ✅ Campo total atualizado: ${campoTotal.value}`);
                     }
 
                     calcularResumo();
