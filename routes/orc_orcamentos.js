@@ -173,18 +173,13 @@ router.get('/:id', async (req, res) => {
     const orcResult = await query(`
       SELECT
         o.*,
-        e.nome as nome_empresa,
         emb."Nome_Embar" as nome_embarcacao,
         emb."Num_PB" as num_pb,
-        emb."Cod_Cliente" as cod_proprietario,
-        forn."Cliente_Nome" as nome_fornecedor,
-        forn."Cliente_CPF" as cnpj_fornecedor,
-        u.nome as usuario_cadastro_nome
+        emb."Codigo" as id_embarcacao_codigo,
+        forn."Cliente_Nome" as nome_fornecedor
       FROM orcamento_servico o
-      INNER JOIN mae_empresa e ON o.id_empresa = e.id_empresa
       INNER JOIN "P_BOAT_1_Embarcacao" emb ON o.id_embarcacao = emb."Código"
       LEFT JOIN "Cliente" forn ON o.id_fornecedor = forn."Codigo"
-      LEFT JOIN mae_usuario u ON o.usuario_cadastro = u.id_usuario
       WHERE o.id_orcamento = $1
     `, [id]);
 
@@ -193,11 +188,6 @@ router.get('/:id', async (req, res) => {
     }
 
     const orcamento = orcResult.rows[0];
-
-    // Verificar permissão
-    if (req.usuario.nivel_acesso !== 'SUPER_ADMIN' && req.usuario.id_grupo !== orcamento.id_grupo) {
-      return res.status(403).json({ erro: 'Sem permissão para acessar este orçamento' });
-    }
 
     // Buscar itens
     const itensResult = await query(`

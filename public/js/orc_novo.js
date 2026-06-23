@@ -8,11 +8,16 @@ let cotistas = [];
 let embarcacoes = [];
 let embarcacoesOriginal = []; // Lista completa sem filtro
 let embarcacaoSelecionadaId = null; // ID da embarcação selecionada
+let orcamentoIdEdicao = null; // ID do orçamento sendo editado
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Iniciando formulário de orçamento...');
 
     try {
+        // Verificar se é edição (URL tem ?id=X)
+        const urlParams = new URLSearchParams(window.location.search);
+        orcamentoIdEdicao = urlParams.get('id');
+
         // Botões
         document.getElementById('btnVoltar').addEventListener('click', () => window.location.href = '/orcamentos.html');
         document.getElementById('btnCancelar').addEventListener('click', () => window.location.href = '/orcamentos.html');
@@ -34,9 +39,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('📡 Carregando fornecedores...');
         await carregarFornecedores();
 
-        // Adicionar primeiro item
-        console.log('➕ Adicionando primeiro item...');
-        adicionarItem();
+        // Se é edição, carregar orçamento
+        if (orcamentoIdEdicao) {
+            console.log(`📝 Modo EDIÇÃO - Carregando orçamento #${orcamentoIdEdicao}...`);
+            await carregarOrcamentoParaEdicao(orcamentoIdEdicao);
+        } else {
+            // Adicionar primeiro item apenas se for novo
+            console.log('➕ Adicionando primeiro item...');
+            adicionarItem();
+        }
 
         console.log('✅ Formulário pronto!');
     } catch (err) {
@@ -536,4 +547,98 @@ function inicializarFiltros() {
     }
 
     console.log('✅ Filtros inicializados');
+}
+
+// ============================================================
+// CARREGAR ORÇAMENTO PARA EDIÇÃO
+// ============================================================
+async function carregarOrcamentoParaEdicao(id) {
+    try {
+        const response = await fetch(`/api/orcamentos/${id}`, {
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro ${response.status}`);
+        }
+
+        const orc = await response.json();
+        console.log('✅ Orçamento carregado:', orc);
+
+        // Preencher campos
+        document.getElementById('titulo').value = orc.descricao || '';
+        document.getElementById('observacao').value = orc.observacao || '';
+        document.getElementById('taxaServico').value = orc.taxa_servico_perc || 20;
+
+        // Fornecedor
+        if (orc.id_fornecedor) {
+            document.getElementById('fornecedor').value = orc.id_fornecedor;
+        }
+
+        // Embarcação
+        embarcacaoSelecionadaId = orc.id_embarcacao;
+        const select = document.getElementById('embarcacao');
+        select.value = orc.id_embarcacao;
+
+        // Carregar cotistas
+        await carregarCotistasPorId(orc.id_embarcacao);
+
+        // Carregar itens
+        itens = [];
+        if (orc.itens && orc.itens.length > 0) {
+            orc.itens.forEach(item => {
+                itens.push({
+                    id: Date.now() + Math.random(),
+                    descricao: item.descricao,
+                    quantidade: item.quantidade,
+                    valor_unitario: item.valor_unitario,
+                    valor_total: item.valor_total
+                });
+            });
+        } else {
+            // Se não tem itens, adicionar um vazio
+            adicionarItem();
+        }
+
+        renderizarItens();
+        calcularResumo();
+
+        // Mudar botão para "Atualizar"
+        const btnSalvar = document.getElementById('btnSalvar');
+        btnSalvar.textContent = 'Atualizar Orçamento';
+
+        // Adicionar botão "Avançar para Rateio" se já está salvo
+        adicionarBotaoAvancarRateio(id, orc.numero);
+
+    } catch (err) {
+        console.error('❌ Erro ao carregar orçamento:', err);
+        alert('Erro ao carregar orçamento para edição');
+    }
+}
+
+// ============================================================
+// ADICIONAR BOTÃO "AVANÇAR PARA RATEIO"
+// ============================================================
+function adicionarBotaoAvancarRateio(id, numero) {
+    const actions = document.querySelector('.form-actions');
+    if (!actions) return;
+
+    // Verificar se já existe
+    if (document.getElementById('btnAvancarRateio')) return;
+
+    // Criar botão
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'btnAvancarRateio';
+    btn.className = 'btn-info';
+    btn.style.cssText = 'background: #17a2b8; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;';
+    btn.textContent = 'Avançar para Rateio →';
+    btn.addEventListener('click', async () => {
+        await carregarModalRateio();
+        await abrirModalRateio(id, numero);
+    });
+
+    // Inserir antes do botão Salvar
+    const btnSalvar = document.getElementById('btnSalvar');
+    actions.insertBefore(btn, btnSalvar);
 }
