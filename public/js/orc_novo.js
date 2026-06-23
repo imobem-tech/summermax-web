@@ -1,6 +1,6 @@
 // ============================================================
 // SCRIPT - NOVO ORÇAMENTO
-// V.2606221725
+// V.2606221750
 // ============================================================
 
 let itens = [];
@@ -303,8 +303,13 @@ async function salvarOrcamento(e) {
         const result = await response.json();
 
         if (response.ok) {
-            alert(`✅ Orçamento ${result.numero} criado com sucesso!`);
-            window.location.href = '/orcamentos.html';
+            console.log('✅ Orçamento criado:', result);
+
+            // Carregar modal HTML
+            await carregarModalRateio();
+
+            // Abrir modal de rateio
+            await abrirModalRateio(result.id_orcamento, result.numero);
         } else {
             alert(`❌ Erro: ${result.erro}`);
             btnSalvar.disabled = false;
@@ -327,7 +332,27 @@ function formatarMoeda(valor) {
     }).format(valor);
 }
 
-// V.2606221725
+// ============================================================
+// CARREGAR MODAL DE RATEIO (HTML)
+// ============================================================
+async function carregarModalRateio() {
+    const container = document.getElementById('modalRateioContainer');
+    if (container && container.innerHTML) {
+        return; // Já carregado
+    }
+
+    try {
+        const response = await fetch('/orc_rateio_modal.html');
+        const html = await response.text();
+        if (container) {
+            container.innerHTML = html;
+        }
+    } catch (err) {
+        console.error('❌ Erro ao carregar modal:', err);
+    }
+}
+
+// V.2606221750
 
 // ============================================================
 // Função de filtro de embarcações - V.2606211805

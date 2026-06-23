@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<!-- ============================================================ -->
+<!-- MODAL DE RATEIO - OVERLAY
+     V.2606221745
+     ============================================================ -->
+<div id="modalRateio" class="modal-overlay" style="display: none;">
+    <div class="modal-rateio">
+        <!-- Cabeçalho -->
+        <div class="modal-header">
+            <div class="modal-title">
+                <h2>📊 Rateio do Orçamento <span id="rateioNumero">#...</span></h2>
+                <p class="modal-subtitle">
+                    <span id="rateioTitulo">Carregando...</span> •
+                    Embarcação: <span id="rateioEmbarcacao">...</span>
+                </p>
+                <div class="status-badge" id="rateioStatus">
+                    <span class="status-icon">🟡</span>
+                    <span class="status-text">RASCUNHO</span>
+                </div>
+            </div>
+            <button class="btn-close-modal" id="btnFecharRateio">✕</button>
+        </div>
+
+        <!-- Valor Total -->
+        <div class="rateio-valor-total">
+            <span>💰 Valor Total do Orçamento:</span>
+            <strong id="rateioValorTotal">R$ 0,00</strong>
+        </div>
+
+        <!-- Tabela de Cotistas -->
+        <div class="rateio-table-container">
+            <table class="rateio-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">
+                            <input type="checkbox" id="checkTodos" title="Marcar/Desmarcar todos">
+                        </th>
+                        <th style="width: 250px;">Cotista</th>
+                        <th style="width: 80px;">Grupo</th>
+                        <th style="width: 120px;">Cotas (%)</th>
+                        <th style="width: 150px;">Valor</th>
+                        <th style="width: 60px;">Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="rateioCotistasBody">
+                    <!-- Linhas serão inseridas via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Resumo Financeiro -->
+        <div class="rateio-resumo">
+            <h4>💰 RESUMO</h4>
+            <div class="resumo-content">
+                <div class="resumo-linha">
+                    <span>Valor do Orçamento:</span>
+                    <strong id="resumoOrcamento">R$ 0,00</strong>
+                </div>
+                <div class="resumo-linha">
+                    <span>Total Distribuído:</span>
+                    <strong id="resumoDistribuido">R$ 0,00</strong>
+                    <span id="statusDistribuido"></span>
+                </div>
+                <div class="resumo-linha divisor">
+                    <span>Diferença:</span>
+                    <strong id="resumoDiferenca">R$ 0,00</strong>
+                    <span id="statusDiferenca"></span>
+                </div>
+                <div class="resumo-linha">
+                    <span>Cotistas Selecionados:</span>
+                    <strong id="resumoCotistas">0 de 0</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ações -->
+        <div class="modal-actions">
+            <button type="button" class="btn-secondary" id="btnCancelarRateio">
+                ← Fechar
+            </button>
+            <button type="button" class="btn-primary" id="btnSalvarRateio">
+                💾 Salvar Rateio
+            </button>
+            <button type="button" class="btn-success" id="btnAprovarRateio">
+                ✅ Aprovar
+            </button>
+            <button type="button" class="btn-info" id="btnGerarCobrancas" disabled>
+                💳 Gerar Cobranças →
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Aprovação -->
+<div id="modalConfirmarAprovacao" class="modal-overlay" style="display: none;">
+    <div class="modal-confirmar">
+        <div class="modal-header-confirmar">
+            <h3>⚠️ CONFIRMAR APROVAÇÃO</h3>
+        </div>
+        <div class="modal-body-confirmar">
+            <p class="aviso-principal">
+                Após aprovar, você <strong>NÃO PODERÁ MAIS</strong> alterar:
+            </p>
+            <ul class="lista-restricoes">
+                <li>• Valores dos cotistas</li>
+                <li>• Percentuais de rateio</li>
+                <li>• Cotistas participantes</li>
+                <li>• Dados do orçamento</li>
+            </ul>
+            <p class="aviso-travamento">
+                🔒 O rateio ficará <strong>travado permanentemente</strong>.
+            </p>
+
+            <div class="resumo-aprovacao">
+                <h4>📊 Resumo Final:</h4>
+                <table class="tabela-resumo-aprovacao">
+                    <tr>
+                        <td>Orçamento:</td>
+                        <td><strong id="aprovOrcamento">R$ 0,00</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Distribuído:</td>
+                        <td><strong id="aprovDistribuido">R$ 0,00</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Diferença:</td>
+                        <td><strong id="aprovDiferenca">R$ 0,00</strong> <span id="aprovStatus"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Cotistas:</td>
+                        <td><strong id="aprovCotistas">0</strong></td>
+                    </tr>
+                </table>
+            </div>
+
+            <p class="pergunta-final">
+                Deseja realmente <strong>APROVAR</strong> este rateio?
+            </p>
+        </div>
+        <div class="modal-actions-confirmar">
+            <button type="button" class="btn-secondary" id="btnNaoAprovar">
+                Não, Cancelar
+            </button>
+            <button type="button" class="btn-success" id="btnSimAprovar">
+                ✅ Sim, Aprovar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- V.2606221745 -->

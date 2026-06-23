@@ -1,0 +1,459 @@
+/* ============================================================
+   ESTILOS DO MODAL DE RATEIO
+   V.2606221745
+   ============================================================ */
+
+/* Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(3px);
+}
+
+/* Container do Modal Principal */
+.modal-rateio {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cabeçalho */
+.modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 24px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+}
+
+.modal-title h2 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.modal-subtitle {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.status-badge.status-rascunho { background: #FFA500; }
+.status-badge.status-em-aprovacao { background: #FF8C00; }
+.status-badge.status-aprovado { background: #28A745; }
+.status-badge.status-em-execucao { background: #007BFF; }
+.status-badge.status-finalizado { background: #6C757D; }
+
+.btn-close-modal {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 24px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+    line-height: 1;
+}
+
+.btn-close-modal:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Valor Total */
+.rateio-valor-total {
+    background: #f8f9fa;
+    padding: 16px 24px;
+    border-bottom: 2px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+}
+
+.rateio-valor-total strong {
+    font-size: 20px;
+    color: #667eea;
+}
+
+/* Tabela */
+.rateio-table-container {
+    padding: 0 24px;
+    margin: 20px 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.rateio-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.rateio-table thead {
+    background: #f8f9fa;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.rateio-table th {
+    padding: 12px 8px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.rateio-table th:first-child,
+.rateio-table td:first-child {
+    text-align: center;
+}
+
+.rateio-table tbody tr {
+    border-bottom: 1px solid #e9ecef;
+    transition: background 0.2s;
+}
+
+.rateio-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.rateio-table tbody tr.excluido {
+    opacity: 0.4;
+    text-decoration: line-through;
+}
+
+.rateio-table tbody tr.desmarcado {
+    opacity: 0.6;
+}
+
+.rateio-table td {
+    padding: 12px 8px;
+    font-size: 14px;
+}
+
+.cotista-nome {
+    font-weight: 500;
+    color: #212529;
+}
+
+.cotista-grupo {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #6c757d;
+}
+
+.cotista-cotas {
+    color: #495057;
+}
+
+.cotista-cotas .percentual {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.cotista-valor {
+    width: 140px;
+}
+
+.cotista-valor input {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: right;
+    font-weight: 600;
+}
+
+.cotista-valor input:disabled {
+    background: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+.cotista-valor input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-excluir-cotista {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s;
+}
+
+.btn-excluir-cotista:hover {
+    background: #c82333;
+}
+
+.btn-excluir-cotista:disabled {
+    background: #e9ecef;
+    color: #adb5bd;
+    cursor: not-allowed;
+}
+
+/* Resumo */
+.rateio-resumo {
+    background: #f8f9fa;
+    padding: 20px 24px;
+    margin: 0 24px 20px 24px;
+    border-radius: 6px;
+    border: 2px solid #e9ecef;
+}
+
+.rateio-resumo h4 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    color: #495057;
+}
+
+.resumo-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.resumo-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.resumo-linha.divisor {
+    border-top: 2px solid #dee2e6;
+    padding-top: 8px;
+    margin-top: 4px;
+    font-size: 16px;
+}
+
+.resumo-linha strong {
+    font-size: 16px;
+}
+
+.resumo-linha.divisor strong {
+    font-size: 18px;
+    color: #667eea;
+}
+
+.resumo-linha span:last-child {
+    margin-left: 8px;
+}
+
+/* Status indicators */
+.status-ok { color: #28a745; font-weight: 600; }
+.status-warning { color: #ffc107; font-weight: 600; }
+.status-error { color: #dc3545; font-weight: 600; }
+
+/* Ações */
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 2px solid #e9ecef;
+    background: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+}
+
+.modal-actions button {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5568d3;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #218838;
+}
+
+.btn-info {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-info:hover {
+    background: #138496;
+}
+
+.modal-actions button:disabled {
+    background: #e9ecef;
+    color: #adb5bd;
+    cursor: not-allowed;
+}
+
+/* Modal de Confirmação */
+.modal-confirmar {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: slideDown 0.3s ease;
+}
+
+.modal-header-confirmar {
+    background: #ffc107;
+    color: #212529;
+    padding: 20px 24px;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
+}
+
+.modal-header-confirmar h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.modal-body-confirmar {
+    padding: 24px;
+}
+
+.aviso-principal {
+    font-size: 15px;
+    margin: 0 0 12px 0;
+}
+
+.lista-restricoes {
+    margin: 12px 0;
+    padding-left: 20px;
+    list-style: none;
+}
+
+.lista-restricoes li {
+    margin: 6px 0;
+    color: #495057;
+}
+
+.aviso-travamento {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 12px;
+    margin: 16px 0;
+    font-size: 14px;
+}
+
+.resumo-aprovacao {
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 6px;
+    margin: 16px 0;
+}
+
+.resumo-aprovacao h4 {
+    margin: 0 0 12px 0;
+    font-size: 15px;
+}
+
+.tabela-resumo-aprovacao {
+    width: 100%;
+}
+
+.tabela-resumo-aprovacao tr {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+    font-size: 14px;
+}
+
+.pergunta-final {
+    text-align: center;
+    font-size: 16px;
+    margin: 16px 0 0 0;
+}
+
+.modal-actions-confirmar {
+    display: flex;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 2px solid #e9ecef;
+    background: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+}
+
+.modal-actions-confirmar button {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* V.2606221745 */

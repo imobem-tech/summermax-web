@@ -1,6 +1,6 @@
 // ============================================================
 // ROTAS DE ORÇAMENTOS (orc_)
-// V.2606221655
+// V.2606221750
 // ============================================================
 
 import express from 'express';
@@ -402,6 +402,270 @@ router.post('/', autorizar('OPERADOR', 'ADMIN_EMPRESA', 'MASTER_GRUPO', 'SUPER_A
   }
 });
 
+// ============================================================
+// GET /api/orcamentos/:id/rateios - Buscar dados para rateio
+// ============================================================
+router.get('/:id/rateios', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Buscar orçamento
+    const orcResult = await query(`
+      SELECT
+        o.id_orcamento,
+        o.numero,
+        o.descricao as titulo,
+        o.valor_total,
+        o.status,
+        o.id_embarcacao,
+        emb."Nome_Embar" as nome_embarcacao,
+        emb."Num_PB" as num_pb
+      FROM orcamento_servico o
+      INNER JOIN "P_BOAT_1_Embarcacao" emb ON o.id_embarcacao = emb."Código"
+      WHERE o.id_orcamento = $1
+    `, [id]);
+
+    if (orcResult.rows.length === 0) {
+      return res.status(404).json({ erro: 'Orçamento não encontrado' });
+    }
+
+    const orcamento = orcResult.rows[0];
+
+    // Buscar cotistas com rateio (se existir)
+    const cotistasResult = await query(`
+      SELECT
+        a."Código" as id,
+        a."Cod_Pessoa" as id_cliente,
+        a."Gropo_letra" as grupo_letra,
+        c."Cliente_Nome" as nome,
+        r.id_rateio,
+        r.qtd_cotas as cotas_calculadas,
+        r.percentual,
+        r.valor_cotista as valor,
+        r.participando
+      FROM "P_BOAT_4_Autorizados" a
+      LEFT JOIN "Cliente" c ON a."Cod_Pessoa" = c."Codigo"
+      LEFT JOIN orcamento_rateio r ON r.id_orcamento = $1 AND r.id_autorizado = a."Código"
+      WHERE a."Cod_Embarcacao" = $2
+        AND a."Dt_Cancelamento" IS NULL
+        AND a."Dt_Desautorizacao" IS NULL
+      ORDER BY a."Gropo_letra", a."Código"
+    `, [id, orcamento.num_pb]);
+
+    // Calcular cotas se não tiver rateio salvo
+    const cotistas = cotistasResult.rows.map(c => {
+      const grupoLetra = c.grupo_letra ? String(c.grupo_letra) : '0';
+      const ultimoDigito = grupoLetra.slice(-1);
+      const cotas = parseInt(ultimoDigito) || 0;
+
+      const cotasCalculadas = c.cotas_calculadas || cotas;
+      return { ...c, cotas_calculadas: cotasCalculadas };
+    });
+
+    // Calcular percentual e valor
+    const totalCotas = cotistas.reduce((sum, c) => sum + c.cotas_calculadas, 0);
+    cotistas.forEach(c => {
+      if (!c.percentual) {
+        c.percentual = totalCotas > 0 ? ((c.cotas_calculadas / totalCotas) * 100).toFixed(2) : 0;
+      }
+      if (!c.valor) {
+        c.valor_calculado = (orcamento.valor_total * c.percentual / 100);
+      } else {
+        c.valor_calculado = c.valor;
+      }
+    });
+
+    res.json({
+      ...orcamento,
+      embarcacao: `${orcamento.num_pb} - ${orcamento.nome_embarcacao}`,
+      cotistas
+    });
+
+  } catch (err) {
+    console.error('❌ Erro ao buscar rateios:', err);
+    res.status(500).json({ erro: 'Erro ao buscar rateios' });
+  }
+});
+
+// ============================================================
+// PUT /api/orcamentos/:id/rateios - Salvar/Atualizar rateio
+// ============================================================
+router.put('/:id/rateios', autorizar('OPERADOR', 'ADMIN_EMPRESA', 'MASTER_GRUPO', 'SUPER_ADMIN'), async (req, res) => {
+  const client = await getClient();
+
+  try {
+    await client.query('BEGIN');
+
+    const { id } = req.params;
+    const { cotistas, resumo } = req.body;
+
+    // Verificar se orçamento existe e não está aprovado
+    const orcResult = await client.query(`
+      SELECT status FROM orcamento_servico WHERE id_orcamento = $1
+    `, [id]);
+
+    if (orcResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ erro: 'Orçamento não encontrado' });
+    }
+
+    const statusAtual = orcResult.rows[0].status;
+    if (statusAtual === 'APROVADO' || statusAtual === 'EM_EXECUCAO' || statusAtual === 'FINALIZADO') {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ erro: 'Orçamento aprovado não pode ser alterado' });
+    }
+
+    // Deletar rateios antigos
+    await client.query('DELETE FROM orcamento_rateio WHERE id_orcamento = $1', [id]);
+
+    // Inserir novos rateios
+    for (const cotista of cotistas) {
+      if (cotista.participando) {
+        await client.query(`
+          INSERT INTO orcamento_rateio (
+            id_orcamento, id_cliente, id_autorizado,
+            qtd_cotas, total_cotas, percentual,
+            valor_servico, valor_taxa, valor_cotista,
+            participando
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        `, [
+          id,
+          cotista.id_cliente,
+          cotista.id_autorizado,
+          cotista.cotas,
+          resumo.qtd_participantes, // Total de cotas ativas
+          cotista.percentual,
+          cotista.valor * 0.8333, // Aproximado (total - taxa)
+          cotista.valor * 0.1667, // Aproximado (taxa)
+          cotista.valor,
+          true
+        ]);
+      }
+    }
+
+    // Atualizar status do orçamento
+    const novoStatus = statusAtual === 'RASCUNHO' ? 'EM_APROVACAO' : statusAtual;
+    await client.query(`
+      UPDATE orcamento_servico
+      SET status = $1
+      WHERE id_orcamento = $2
+    `, [novoStatus, id]);
+
+    // Log
+    await client.query(`
+      INSERT INTO orcamento_log (
+        id_orcamento, acao, descricao, status_novo, id_usuario, ip_origem
+      ) VALUES ($1, $2, $3, $4, $5, $6)
+    `, [
+      id,
+      'RATEIO_SALVO',
+      `Rateio salvo com ${resumo.qtd_participantes} cotistas`,
+      novoStatus,
+      req.usuario.id_usuario,
+      req.ip
+    ]);
+
+    await client.query('COMMIT');
+
+    res.json({
+      sucesso: true,
+      status_novo: novoStatus,
+      mensagem: 'Rateio salvo com sucesso'
+    });
+
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('❌ Erro ao salvar rateio:', err);
+    res.status(500).json({ erro: 'Erro ao salvar rateio' });
+  } finally {
+    client.release();
+  }
+});
+
+// ============================================================
+// POST /api/orcamentos/:id/aprovar - Aprovar orçamento
+// ============================================================
+router.post('/:id/aprovar', autorizar('OPERADOR', 'ADMIN_EMPRESA', 'MASTER_GRUPO', 'SUPER_ADMIN'), async (req, res) => {
+  const client = await getClient();
+
+  try {
+    await client.query('BEGIN');
+
+    const { id } = req.params;
+
+    // Verificar status
+    const orcResult = await client.query(`
+      SELECT status, valor_total FROM orcamento_servico WHERE id_orcamento = $1
+    `, [id]);
+
+    if (orcResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ erro: 'Orçamento não encontrado' });
+    }
+
+    const { status, valor_total } = orcResult.rows[0];
+
+    if (status === 'APROVADO' || status === 'EM_EXECUCAO' || status === 'FINALIZADO') {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ erro: 'Orçamento já foi aprovado' });
+    }
+
+    // Verificar diferença do rateio
+    const rateioResult = await client.query(`
+      SELECT SUM(valor_cotista) as total_distribuido
+      FROM orcamento_rateio
+      WHERE id_orcamento = $1 AND participando = true
+    `, [id]);
+
+    const totalDistribuido = parseFloat(rateioResult.rows[0]?.total_distribuido || 0);
+    const diferenca = Math.abs(valor_total - totalDistribuido);
+
+    if (diferenca > 2.00) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({
+        erro: `Diferença muito grande: R$ ${diferenca.toFixed(2)}. Máximo permitido: R$ 2,00`
+      });
+    }
+
+    // Aprovar
+    await client.query(`
+      UPDATE orcamento_servico
+      SET status = 'APROVADO',
+          aprovado_em = NOW(),
+          aprovado_por = $1
+      WHERE id_orcamento = $2
+    `, [req.usuario.id_usuario, id]);
+
+    // Log
+    await client.query(`
+      INSERT INTO orcamento_log (
+        id_orcamento, acao, descricao, status_novo, id_usuario, ip_origem
+      ) VALUES ($1, $2, $3, $4, $5, $6)
+    `, [
+      id,
+      'APROVACAO',
+      `Orçamento aprovado (diferença: R$ ${diferenca.toFixed(2)})`,
+      'APROVADO',
+      req.usuario.id_usuario,
+      req.ip
+    ]);
+
+    await client.query('COMMIT');
+
+    res.json({
+      sucesso: true,
+      mensagem: '✅ Orçamento aprovado com sucesso! 🔒 Agora está travado.'
+    });
+
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('❌ Erro ao aprovar:', err);
+    res.status(500).json({ erro: 'Erro ao aprovar orçamento' });
+  } finally {
+    client.release();
+  }
+});
+
 export default router;
 
-// V.2606221655
+// V.2606221750

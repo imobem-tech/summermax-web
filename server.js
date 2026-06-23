@@ -72,6 +72,11 @@ app.get('/orcamentos-novo.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'orc_novo.html'));
 });
 
+// Modal de Rateio
+app.get('/orc_rateio_modal.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'orc_rateio_modal.html'));
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({
