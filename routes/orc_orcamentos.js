@@ -175,7 +175,7 @@ router.get('/:id', async (req, res) => {
         o.*,
         emb."Nome_Embar" as nome_embarcacao,
         emb."Num_PB" as num_pb,
-        emb."Codigo" as id_embarcacao_codigo,
+        emb."Código" as id_embarcacao_codigo,
         forn."Cliente_Nome" as nome_fornecedor
       FROM orcamento_servico o
       INNER JOIN "P_BOAT_1_Embarcacao" emb ON o.id_embarcacao = emb."Código"
