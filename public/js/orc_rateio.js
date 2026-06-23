@@ -238,6 +238,11 @@ function recalcularRateio() {
 // CALCULAR RESUMO
 // ============================================================
 function calcularResumo() {
+    // Verificar se modal está aberto
+    if (!orcamentoAtual) {
+        return; // Não fazer nada se modal não está aberto
+    }
+
     const valorOrcamento = orcamentoAtual.valor_total;
     const valorDistribuido = cotistasRateio
         .filter(c => c.participando)
