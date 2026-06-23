@@ -29,6 +29,7 @@ async function abrirModalRateio(idOrcamento, numero) {
         orcamentoAtual = data;
 
         console.log('✅ Dados do rateio carregados:', data);
+        console.log(`   → Valor Total: R$ ${data.valor_total}`);
 
         // Preencher cabeçalho
         document.getElementById('rateioNumero').textContent = `#${numero}`;
@@ -243,7 +244,8 @@ function calcularResumo() {
         return; // Não fazer nada se modal não está aberto
     }
 
-    const valorOrcamento = orcamentoAtual.valor_total;
+    const valorOrcamento = parseFloat(orcamentoAtual.valor_total) || 0;
+    console.log('💰 Calculando resumo - Valor orçamento:', valorOrcamento);
     const valorDistribuido = cotistasRateio
         .filter(c => c.participando)
         .reduce((sum, c) => sum + (c.valor_editado || 0), 0);
