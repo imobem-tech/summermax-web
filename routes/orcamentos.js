@@ -1,13 +1,13 @@
 // ============================================================
-// web-app/routes/orcamentos.js — V.2610301205
+// web-app/routes/orcamentos.js — V.2610300831
 // ROTAS WEB DO SISTEMA DE ORÇAMENTOS
 //
 // 🎯 Usa shared/orcamentos-core.js (fonte única)
+// 🎯 Usa pool centralizado de db/connection.js
 // ============================================================
 
 import express from 'express';
-import pkg from 'pg';
-const { Pool } = pkg;
+import { query, getClient } from '../db/connection.js';
 import {
   gerarMenuPrincipal,
   gerarMenuEmbarcacoes,
@@ -29,12 +29,6 @@ import {
 } from '../shared/orcamentos-core.js';
 
 const router = express.Router();
-
-// Pool de conexão
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL || process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-});
 
 // Middleware de autenticação (TEMPORARIAMENTE DESABILITADO para desenvolvimento)
 function autenticar(req, res, next) {
@@ -70,7 +64,7 @@ function autenticar(req, res, next) {
  */
 router.get('/menu', autenticar, async (req, res) => {
   try {
-    const result = await pool.query(QUERIES.CONTAGENS_MENU);
+    const result = await query(QUERIES.CONTAGENS_MENU);
 
     const contagens = {
       abertos: parseInt(result.rows[0].abertos) || 0,
@@ -101,7 +95,7 @@ router.get('/menu', autenticar, async (req, res) => {
  */
 router.get('/embarcacoes', autenticar, async (req, res) => {
   try {
-    const result = await pool.query(QUERIES.LISTAR_EMBARCACOES);
+    const result = await query(QUERIES.LISTAR_EMBARCACOES);
 
     const menu = gerarMenuEmbarcacoes(result.rows);
 
@@ -188,7 +182,7 @@ router.post('/validar-valor', autenticar, async (req, res) => {
  * Cria novo orçamento no banco
  */
 router.post('/criar', autenticar, async (req, res) => {
-  const client = await pool.connect();
+  const client = await getClient();
 
   try {
     await client.query('BEGIN');
@@ -268,7 +262,7 @@ router.get('/listar', autenticar, async (req, res) => {
       whereClause = "os.status = 'APROVADO' AND os.id_grupo = 1 AND (os.id_cobranca IS NULL OR os.id_cobranca = 0)";
     }
 
-    const result = await pool.query(`
+    const result = await query(`
       SELECT
         os.id_orcamento,
         os.numero,
@@ -306,7 +300,7 @@ router.get('/:id', autenticar, async (req, res) => {
     const { id } = req.params;
 
     // Buscar orçamento
-    const orcResult = await pool.query(`
+    const orcResult = await query(`
       SELECT
         os.id_orcamento,
         os.numero,
@@ -329,7 +323,7 @@ router.get('/:id', autenticar, async (req, res) => {
     }
 
     // Buscar itens
-    const itensResult = await pool.query(`
+    const itensResult = await query(`
       SELECT
         id_item,
         ordem,
