@@ -305,6 +305,7 @@ function mostrarCliente(cliente) {
     document.getElementById('dadoCpf').textContent = formatarCPF(cliente.Cliente_CPF) || '-';
     document.getElementById('dadoApelido').textContent = cliente.Cliente_Apelido || '-';
     document.getElementById('dadoEmitirCobranca').textContent = cliente.Alerta_Emite_Carta ? '✅ SIM' : '❌ NÃO';
+    document.getElementById('dadoDiasAntes').textContent = cliente.Plano_Pgto || '7';
 
     // Contato
     document.getElementById('dadoEmail').textContent = cliente.Cliente_e_mail || '-';
