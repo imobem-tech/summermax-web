@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamentos - SUMMERMAX</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/orc_orcamentos.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <h1 class="logo">SUMMERMAX</h1>
+        </div>
+        <div class="header-right">
+            <span id="nomeUsuario" class="user-name">Carregando...</span>
+            <button id="btnLogout" class="btn-logout">Sair</button>
+        </div>
+    </header>
+
+    <!-- Container Principal -->
+    <div class="main-container">
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <nav class="menu">
+                <a href="/dashboard.html" class="menu-item">
+                    📊 Dashboard
+                </a>
+                <div class="menu-section">Cadastros</div>
+                <a href="/clientes.html" class="menu-item">
+                    👥 Clientes
+                </a>
+                <a href="/embarcacoes.html" class="menu-item">
+                    🚤 Embarcações
+                </a>
+                <a href="/fornecedores.html" class="menu-item">
+                    🚚 Fornecedores
+                </a>
+
+                <div class="menu-section">Operacional</div>
+                <a href="/orcamentos.html" class="menu-item active">
+                    📝 Orçamentos
+                </a>
+
+                <div class="menu-section">Financeiro</div>
+                <a href="/contas-receber.html" class="menu-item">
+                    💰 Contas a Receber
+                </a>
+
+                <div class="menu-section">Configurações</div>
+                <a href="/usuarios.html" class="menu-item">
+                    👤 Usuários
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="content">
+            <div class="page-header">
+                <div>
+                    <h2>Orçamentos</h2>
+                    <p class="subtitle">Gerenciar orçamentos de serviços</p>
+                </div>
+                <button id="btnNovo" class="btn-primary">
+                    ➕ Novo Orçamento
+                </button>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filters-card">
+                <div class="filters-row">
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="filtroStatus">
+                            <option value="">Todos</option>
+                            <option value="RASCUNHO">Rascunho</option>
+                            <option value="ENVIADO">Enviado</option>
+                            <option value="APROVADO">Aprovado</option>
+                            <option value="RECUSADO">Recusado</option>
+                            <option value="CONCLUIDO">Concluído</option>
+                            <option value="CANCELADO">Cancelado</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Buscar</label>
+                        <input type="text" id="filtroBusca" placeholder="Número, embarcação...">
+                    </div>
+
+                    <button id="btnFiltrar" class="btn-secondary">Filtrar</button>
+                    <button id="btnLimpar" class="btn-secondary">Limpar</button>
+                </div>
+            </div>
+
+            <!-- Tabela de Orçamentos -->
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Data</th>
+                            <th>Embarcação</th>
+                            <th>Descrição</th>
+                            <th>Valor Total</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaOrcamentos">
+                        <tr>
+                            <td colspan="7" class="loading">Carregando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginação -->
+            <div id="paginacao" class="pagination"></div>
+        </main>
+    </div>
+
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/orc_orcamentos.js"></script>
+</body>
+</html>
+
+<!-- V.2606181605 -->

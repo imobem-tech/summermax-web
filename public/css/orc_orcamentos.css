@@ -1,0 +1,266 @@
+/* ============================================================
+   ESTILOS DE ORÇAMENTOS
+   V.2606181607
+   ============================================================ */
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.btn-primary {
+    background: var(--cor-primaria);
+    color: var(--cor-branco);
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background: var(--cor-secundaria);
+}
+
+.btn-secondary {
+    background: var(--cor-branco);
+    color: var(--cor-primaria);
+    padding: 10px 20px;
+    border: 1px solid var(--cor-primaria);
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background: var(--cor-primaria);
+    color: var(--cor-branco);
+}
+
+/* Filtros */
+.filters-card {
+    background: var(--cor-branco);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--sombra);
+    margin-bottom: 24px;
+}
+
+.filters-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.filter-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--cor-texto);
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 10px;
+    border: 1px solid #DDD;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+}
+
+/* Tabela */
+.table-container {
+    background: var(--cor-branco);
+    border-radius: 12px;
+    box-shadow: var(--sombra);
+    overflow-x: auto;
+    margin-bottom: 24px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: var(--cor-fundo);
+}
+
+.data-table th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--cor-texto);
+    border-bottom: 2px solid #E0E0E0;
+}
+
+.data-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #F0F0F0;
+    color: var(--cor-texto);
+}
+
+.data-table tbody tr:hover {
+    background: var(--cor-fundo);
+}
+
+.data-table td.loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--cor-texto-claro);
+}
+
+/* Status badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-rascunho {
+    background: #E0E0E0;
+    color: #666;
+}
+
+.status-enviado {
+    background: #E3F2FD;
+    color: #1976D2;
+}
+
+.status-aprovado {
+    background: #E8F5E9;
+    color: #388E3C;
+}
+
+.status-recusado {
+    background: #FFEBEE;
+    color: #D32F2F;
+}
+
+.status-concluido {
+    background: #E8F5E9;
+    color: #2E7D32;
+}
+
+.status-cancelado {
+    background: #FFEBEE;
+    color: #C62828;
+}
+
+/* Botões de ação */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.btn-view {
+    background: #E3F2FD;
+    color: #1976D2;
+}
+
+.btn-view:hover {
+    background: #1976D2;
+    color: white;
+}
+
+.btn-edit {
+    background: #FFF3E0;
+    color: #F57C00;
+}
+
+.btn-edit:hover {
+    background: #F57C00;
+    color: white;
+}
+
+.btn-delete {
+    background: #FFEBEE;
+    color: #D32F2F;
+}
+
+.btn-delete:hover {
+    background: #D32F2F;
+    color: white;
+}
+
+/* Paginação */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px;
+}
+
+.pagination button {
+    padding: 8px 12px;
+    border: 1px solid #DDD;
+    background: var(--cor-branco);
+    color: var(--cor-texto);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pagination button:hover {
+    background: var(--cor-primaria);
+    color: var(--cor-branco);
+    border-color: var(--cor-primaria);
+}
+
+.pagination button.active {
+    background: var(--cor-primaria);
+    color: var(--cor-branco);
+    border-color: var(--cor-primaria);
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .filters-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .table-container {
+        overflow-x: scroll;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+}
+
+/* V.2606181607 */

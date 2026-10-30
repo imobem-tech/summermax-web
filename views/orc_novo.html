@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Orçamento - SUMMERMAX</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/orc_orcamentos.css">
+    <link rel="stylesheet" href="/css/orc_novo.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <h1 class="logo">SUMMERMAX</h1>
+        </div>
+        <div class="header-right">
+            <span id="nomeUsuario" class="user-name">Carregando...</span>
+            <button id="btnLogout" class="btn-logout">Sair</button>
+        </div>
+    </header>
+
+    <!-- Container Principal -->
+    <div class="main-container">
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <nav class="menu">
+                <a href="/dashboard.html" class="menu-item">📊 Dashboard</a>
+                <div class="menu-section">Cadastros</div>
+                <a href="/clientes.html" class="menu-item">👥 Clientes</a>
+                <a href="/embarcacoes.html" class="menu-item">🚤 Embarcações</a>
+                <a href="/fornecedores.html" class="menu-item">🚚 Fornecedores</a>
+                <div class="menu-section">Operacional</div>
+                <a href="/orcamentos.html" class="menu-item active">📝 Orçamentos</a>
+                <div class="menu-section">Financeiro</div>
+                <a href="/contas-receber.html" class="menu-item">💰 Contas a Receber</a>
+                <div class="menu-section">Configurações</div>
+                <a href="/usuarios.html" class="menu-item">👤 Usuários</a>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="content">
+            <div class="page-header">
+                <div>
+                    <h2>Novo Orçamento</h2>
+                    <p class="subtitle">Criar orçamento de serviço</p>
+                </div>
+                <button id="btnVoltar" class="btn-secondary">← Voltar</button>
+            </div>
+
+            <form id="formOrcamento" class="form-orcamento">
+                <!-- Passo 1: Embarcação -->
+                <div class="form-section">
+                    <h3>1. Embarcação</h3>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Embarcação *</label>
+                            <select id="embarcacao" required>
+                                <option value="">Carregando...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Cotistas (aparece após selecionar embarcação) -->
+                    <div id="cotistasSection" style="display: none;">
+                        <h4>👥 Cotistas</h4>
+                        <div id="listaCotistas" class="cotistas-grid"></div>
+                    </div>
+                </div>
+
+                <!-- Passo 2: Dados do Orçamento -->
+                <div class="form-section">
+                    <h3>2. Dados do Orçamento</h3>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Descrição *</label>
+                            <input type="text" id="descricao" required placeholder="Ex: Revisão completa de motor">
+                        </div>
+                        <div class="form-group">
+                            <label>Fornecedor</label>
+                            <select id="fornecedor">
+                                <option value="">Selecione...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Observações</label>
+                            <textarea id="observacao" rows="3" placeholder="Observações adicionais..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Passo 3: Itens -->
+                <div class="form-section">
+                    <h3>3. Itens / Serviços</h3>
+
+                    <div id="listaItens"></div>
+
+                    <button type="button" id="btnAddItem" class="btn-add-item">
+                        ➕ Adicionar Item
+                    </button>
+                </div>
+
+                <!-- Passo 4: Pagamento e Resumo -->
+                <div class="form-section">
+                    <h3>4. Pagamento e Resumo</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Taxa de Serviço (%)</label>
+                            <input type="number" id="taxaServico" value="20" min="0" max="100" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Forma de Pagamento</label>
+                            <select id="formaPagamento">
+                                <option value="BOLETO">Boleto</option>
+                                <option value="PIX">PIX</option>
+                                <option value="CARTAO">Cartão</option>
+                                <option value="TRANSFERENCIA">Transferência</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Parcelas</label>
+                            <input type="number" id="qtdParcelas" value="1" min="1" max="12">
+                        </div>
+                        <div class="form-group">
+                            <label>Dias para Vencimento</label>
+                            <input type="number" id="diasVencimento" value="5" min="1" max="90">
+                        </div>
+                    </div>
+
+                    <!-- Resumo -->
+                    <div class="resumo-card">
+                        <h4>💰 Resumo Financeiro</h4>
+                        <div class="resumo-linha">
+                            <span>Valor dos Serviços:</span>
+                            <strong id="resumoServicos">R$ 0,00</strong>
+                        </div>
+                        <div class="resumo-linha">
+                            <span>Taxa de Serviço (<span id="resumoTaxaPerc">20</span>%):</span>
+                            <strong id="resumoTaxa">R$ 0,00</strong>
+                        </div>
+                        <div class="resumo-linha total">
+                            <span>TOTAL:</span>
+                            <strong id="resumoTotal">R$ 0,00</strong>
+                        </div>
+                        <div class="resumo-linha">
+                            <span>Valor por Parcela:</span>
+                            <strong id="resumoParcela">R$ 0,00</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botões -->
+                <div class="form-actions">
+                    <button type="button" id="btnCancelar" class="btn-secondary">Cancelar</button>
+                    <button type="submit" id="btnSalvar" class="btn-primary">Salvar Orçamento</button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/orc_novo.js"></script>
+</body>
+</html>
+
+<!-- V.2606181620 -->

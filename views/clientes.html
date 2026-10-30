@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes - SUMMERMAX</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/clientes.css?v=261029212746">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Menu Lateral -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>🚤 SUMMERMAX</h2>
+            </div>
+
+            <nav class="menu">
+                <a href="/dashboard.html" class="menu-item">
+                    🏠 Dashboard
+                </a>
+                <a href="/clientes.html" class="menu-item active">
+                    👥 Clientes
+                </a>
+                <a href="/orcamentos.html" class="menu-item">
+                    📋 Orçamentos
+                </a>
+
+                <div class="menu-section">Financeiro</div>
+                <a href="/contas-receber.html" class="menu-item">
+                    💰 Contas a Receber
+                </a>
+
+                <div class="menu-section">Sistema</div>
+                <a href="#" class="menu-item" id="btnLogout">
+                    🚪 Sair
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>👥 Clientes</h1>
+                <div class="user-info">
+                    <span id="userName">Carregando...</span>
+                </div>
+            </header>
+
+            <!-- Área de Busca -->
+            <section class="search-section" id="searchSection">
+                <div class="search-container">
+                    <h2>Buscar Cliente</h2>
+
+                    <div class="search-fields">
+                        <!-- Busca por Código -->
+                        <div class="search-field">
+                            <label for="inputCodigo">🔢 Código</label>
+                            <input
+                                type="number"
+                                id="inputCodigo"
+                                placeholder="Digite o código do cliente..."
+                                autocomplete="off"
+                            >
+                            <small>Pressione Enter para buscar</small>
+                        </div>
+
+                        <div class="search-divider">OU</div>
+
+                        <!-- Busca por Nome -->
+                        <div class="search-field">
+                            <label for="inputNome">👤 Nome</label>
+                            <input
+                                type="text"
+                                id="inputNome"
+                                placeholder="Digite parte do nome..."
+                                autocomplete="off"
+                            >
+                            <small>Digite pelo menos 3 letras</small>
+
+                            <!-- Lista de resultados (autocomplete) -->
+                            <div class="autocomplete-results" id="autocompleteResults"></div>
+                        </div>
+                    </div>
+
+                    <button class="btn-novo" id="btnNovoCliente">
+                        ➕ Novo Cliente
+                    </button>
+                </div>
+            </section>
+
+            <!-- Área de Detalhes do Cliente (oculta inicialmente) -->
+            <section class="cliente-detalhes" id="clienteDetalhes" style="display: none;">
+                <div class="detalhes-header">
+                    <button class="btn-voltar" id="btnVoltar">← Voltar</button>
+                    <h2 id="clienteNome">Nome do Cliente</h2>
+                    <div class="acoes-header">
+                        <button class="btn-editar" id="btnEditar">✏️ Editar</button>
+                    </div>
+                </div>
+
+                <!-- Cards de Resumo -->
+                <div class="resumo-cards">
+                    <div class="resumo-card">
+                        <span class="resumo-label">Em Aberto</span>
+                        <span class="resumo-valor" id="resumoAberto">R$ -</span>
+                    </div>
+                    <div class="resumo-card">
+                        <span class="resumo-label">Saídas Este Mês</span>
+                        <span class="resumo-valor" id="resumoSaidas">-</span>
+                    </div>
+                    <div class="resumo-card">
+                        <span class="resumo-label">Status</span>
+                        <span class="resumo-valor status" id="resumoStatus">-</span>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="dados">📋 Dados</button>
+                    <button class="tab-button" data-tab="contas">💰 Contas a Receber</button>
+                    <button class="tab-button" data-tab="saidas">🚤 Saídas</button>
+                    <button class="tab-button" data-tab="historico">📊 Histórico</button>
+                </div>
+
+                <!-- Conteúdo das Tabs -->
+                <div class="tab-content">
+                    <!-- Tab Dados -->
+                    <div class="tab-pane active" id="tabDados">
+                        <div class="dados-grupo">
+                            <h3>📝 Dados Cadastrais</h3>
+                            <div class="dados-grid">
+                                <div class="dado-item">
+                                    <span class="dado-label">Nome:</span>
+                                    <span class="dado-valor" id="dadoNome">-</span>
+                                </div>
+                                <div class="dado-item">
+                                    <span class="dado-label">Código:</span>
+                                    <span class="dado-valor" id="dadoCodigo">-</span>
+                                </div>
+                                <div class="dado-item">
+                                    <span class="dado-label">CPF:</span>
+                                    <span class="dado-valor" id="dadoCpf">-</span>
+                                </div>
+                                <div class="dado-item">
+                                    <span class="dado-label">Apelido:</span>
+                                    <span class="dado-valor" id="dadoApelido">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dados-grupo">
+                            <h3>📞 Contato</h3>
+                            <div class="dados-grid">
+                                <div class="dado-item">
+                                    <span class="dado-label">Email:</span>
+                                    <span class="dado-valor" id="dadoEmail">-</span>
+                                </div>
+                                <div class="dado-item">
+                                    <span class="dado-label">Telefone:</span>
+                                    <span class="dado-valor" id="dadoTelefone">-</span>
+                                </div>
+                                <div class="dado-item">
+                                    <span class="dado-label">Celular:</span>
+                                    <span class="dado-valor" id="dadoCelular">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dados-grupo">
+                            <h3>📍 Endereço</h3>
+                            <div class="dados-grid">
+                                <div class="dado-item full">
+                                    <span class="dado-label">Logradouro:</span>
+                                    <span class="dado-valor" id="dadoEndereco">-</span>
+                                </div>
+                                <div class="dado-item">
+                                    <span class="dado-label">Bairro:</span>
+                                    <span class="dado-valor" id="dadoBairro">-</span>
+                                </div>
+                                <div class="dado-item">
+                                    <span class="dado-label">Cidade/UF:</span>
+                                    <span class="dado-valor" id="dadoCidade">-</span>
+                                </div>
+                                <div class="dado-item">
+                                    <span class="dado-label">CEP:</span>
+                                    <span class="dado-valor" id="dadoCep">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dados-grupo">
+                            <h3>📌 Observações</h3>
+                            <div class="observacoes" id="dadoObservacoes">
+                                <p>Sem observações</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Contas a Receber -->
+                    <div class="tab-pane" id="tabContas" style="display: none;">
+                        <h3>💰 Contas a Receber</h3>
+
+                        <!-- Filtros -->
+                        <div class="filtros-contas">
+                            <div class="filtro-grupo">
+                                <label>Período:</label>
+                                <input type="date" id="filtroDataDe" class="input-filtro">
+                                <span>até</span>
+                                <input type="date" id="filtroDataAte" class="input-filtro">
+                            </div>
+
+                            <div class="filtro-grupo">
+                                <label>Status:</label>
+                                <select id="filtroStatus" class="select-filtro">
+                                    <option value="vencidas">Vencidas</option>
+                                    <option value="abertas">Abertas</option>
+                                    <option value="quitadas">Quitadas</option>
+                                    <option value="todas">Todas</option>
+                                </select>
+                            </div>
+
+                            <button class="btn-filtrar" id="btnFiltrarContas">🔍 Filtrar</button>
+                        </div>
+
+                        <!-- Lista de Contas -->
+                        <div id="listaContas">
+                            <p class="texto-vazio">Carregando...</p>
+                        </div>
+                    </div>
+
+                    <!-- Tab Saídas -->
+                    <div class="tab-pane" id="tabSaidas" style="display: none;">
+                        <h3>🚤 Histórico de Saídas</h3>
+                        <div id="listaSaidas">
+                            <p class="texto-vazio">Carregando...</p>
+                        </div>
+                    </div>
+
+                    <!-- Tab Histórico -->
+                    <div class="tab-pane" id="tabHistorico" style="display: none;">
+                        <h3>📊 Linha do Tempo</h3>
+                        <div id="timeline">
+                            <p class="texto-vazio">Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ações Rápidas -->
+                <div class="acoes-rapidas">
+                    <button class="btn-acao" id="btnVerContas">💰 Ver Contas a Receber</button>
+                    <button class="btn-acao" id="btnNovaSaida">🚤 Nova Saída</button>
+                    <button class="btn-acao" id="btnWhatsApp">📱 WhatsApp</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL MARCAR COMO PAGA -->
+    <div id="modalMarcarPaga" class="modal">
+        <div class="modal-content modal-pagamento">
+            <div class="modal-header">
+                <h2>💰 Marcar Conta como Paga</h2>
+                <button class="btn-close-modal" onclick="fecharModalPagamento()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="pagamento-container">
+                    <!-- COLUNA ESQUERDA: FORMULÁRIO -->
+                    <div class="pagamento-form">
+                        <h3>📝 Dados do Pagamento</h3>
+                        <div class="modal-section">
+                    <div class="campo-form">
+                        <label>Conta:</label>
+                        <span id="pagConta" class="info-destaque">-</span>
+                    </div>
+
+                    <div class="campo-form">
+                        <label>Valor Original:</label>
+                        <span id="pagValor" class="info-destaque">-</span>
+                    </div>
+
+                    <div class="campo-form">
+                        <label>Data do Pagamento: *</label>
+                        <input type="date" id="pagDataPagamento" class="input-form" required>
+                    </div>
+
+                    <div class="campo-form">
+                        <label>Valor Pago: *</label>
+                        <input type="number" id="pagValorPago" class="input-form" step="0.01" required>
+                    </div>
+
+                    <div class="campo-form">
+                        <label>Forma de Pagamento:</label>
+                        <select id="pagPortador" class="input-form">
+                            <option value="PIX">PIX</option>
+                            <option value="DINHEIRO">Dinheiro</option>
+                            <option value="CARTÃO">Cartão</option>
+                            <option value="TRANSFERÊNCIA">Transferência</option>
+                            <option value="BOLETO">Boleto</option>
+                            <option value="CHEQUE">Cheque</option>
+                        </select>
+                    </div>
+
+                    <div class="campo-form full">
+                        <label>Justificativa / Observações: *</label>
+                        <textarea id="pagObservacoes" class="textarea-form" rows="4"
+                            placeholder="Descreva o motivo do pagamento manual, forma como foi recebido, etc..."
+                            required></textarea>
+                    </div>
+
+                    <div class="alert-info">
+                        ℹ️ Este pagamento será registrado como <strong>PAGAMENTO MANUAL</strong> e será baixado automaticamente no Asaas.
+                    </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUNA DIREITA: DADOS DO ASAAS -->
+                    <div class="pagamento-asaas">
+                        <h3>🏦 Status no Asaas</h3>
+
+                        <div id="asaasStatusPagamento" class="asaas-info">
+                            <div class="loading-asaas">
+                                ⏳ Buscando dados do Asaas...
+                            </div>
+                        </div>
+
+                        <div id="asaasDadosPagamento" style="display: none;">
+                            <div class="asaas-field">
+                                <label>STATUS:</label>
+                                <span id="asaasPagStatus" class="status-badge">-</span>
+                            </div>
+
+                            <div id="asaasAvisoCancelada" class="alert-warning" style="display: none; margin: 10px 0; padding: 10px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+                                ⚠️ <strong>Cobrança CANCELADA no Asaas.</strong><br>
+                                Ao marcar como paga aqui, você está registrando um pagamento manual FORA do Asaas.
+                            </div>
+
+                            <div class="asaas-field">
+                                <label>ID COBRANÇA:</label>
+                                <span id="asaasPagId">-</span>
+                            </div>
+
+                            <div class="asaas-field">
+                                <label>Valor:</label>
+                                <span id="asaasPagValor">-</span>
+                            </div>
+
+                            <div class="asaas-field">
+                                <label>Vencimento:</label>
+                                <span id="asaasPagVencimento">-</span>
+                            </div>
+
+                            <div class="asaas-field">
+                                <label>Forma:</label>
+                                <span id="asaasPagForma">-</span>
+                            </div>
+
+                            <div class="asaas-field full">
+                                <label>Link:</label>
+                                <a id="asaasPagLink" href="#" target="_blank">🔗 Ver no Asaas</a>
+                            </div>
+
+                            <div class="alert-success">
+                                ✅ Ao confirmar, a baixa será feita automaticamente no Asaas como <strong>PAGAMENTO MANUAL</strong>.
+                            </div>
+                        </div>
+
+                        <div id="asaasSemIntegracao" style="display: none;">
+                            <div class="alert-warning">
+                                ⚠️ Esta conta não possui integração com o Asaas. O pagamento será registrado apenas localmente.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal-cancelar" onclick="fecharModalPagamento()">Cancelar</button>
+                <button class="btn-modal-confirmar" onclick="confirmarPagamento()">✅ Confirmar Pagamento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ADICIONAR OBSERVAÇÃO -->
+    <div id="modalObservacao" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>📝 Adicionar Observação</h2>
+                <button class="btn-close-modal" onclick="fecharModalObservacao()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Observação: *</label>
+                    <textarea id="obsTexto" class="textarea-form" rows="6"
+                        placeholder="Digite sua observação..."
+                        required></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal-cancelar" onclick="fecharModalObservacao()">Cancelar</button>
+                <button class="btn-modal-confirmar" onclick="salvarObservacao()">✅ Salvar Observação</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DETALHES DA CONTA -->
+    <div id="modalDetalhesConta" class="modal">
+        <div class="modal-content" style="max-width: 1600px;">
+            <div class="modal-header">
+                <h2>📋 Detalhes da Conta</h2>
+                <button class="btn-close-modal" onclick="fecharModalDetalhes()">✕</button>
+            </div>
+
+            <!-- CABEÇALHO COM DADOS DA CONTA (IGUAL À TABELA) -->
+            <div class="conta-header">
+                <div class="conta-row">
+                    <div class="conta-col">
+                        <span class="conta-label">Código</span>
+                        <span class="conta-value" id="cabCodigoCliente">-</span>
+                    </div>
+                    <div class="conta-col">
+                        <span class="conta-label">Centro</span>
+                        <span class="conta-value" id="cabCentroCusto">-</span>
+                    </div>
+                    <div class="conta-col">
+                        <span class="conta-label">Conta</span>
+                        <span class="conta-value" id="cabCodigo">-</span>
+                    </div>
+                    <div class="conta-col-large">
+                        <span class="conta-label">Descrição</span>
+                        <span class="conta-value" id="cabDescricao">-</span>
+                    </div>
+                    <div class="conta-col">
+                        <span class="conta-label">Vencimento</span>
+                        <span class="conta-value" id="cabVencimento">-</span>
+                    </div>
+                    <div class="conta-col">
+                        <span class="conta-label">Atual</span>
+                        <span class="conta-value" id="cabValorAtual">-</span>
+                    </div>
+                    <div class="conta-col">
+                        <span class="conta-label">Valor</span>
+                        <span class="conta-value" id="cabValor">-</span>
+                    </div>
+                    <div class="conta-col">
+                        <span class="conta-label">Data Pgto</span>
+                        <span class="conta-value" id="cabDataPgto">-</span>
+                    </div>
+                    <div class="conta-col">
+                        <span class="conta-label">Pago</span>
+                        <span class="conta-value" id="cabPago">-</span>
+                    </div>
+                    <div class="conta-col">
+                        <span class="conta-label">Status</span>
+                        <span id="cabStatus" class="status-badge">-</span>
+                    </div>
+                </div>
+
+                <!-- TABS DENTRO DO CABEÇALHO -->
+                <div class="modal-header-tabs">
+                    <button class="modal-tab-compact active" data-modal-tab="acoes">⚡ Ações</button>
+                    <button class="modal-tab-compact" data-modal-tab="observacoes">📝 Observações</button>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <!-- TAB AÇÕES -->
+                <div class="modal-tab-content active" id="modalTabAcoes">
+                    <div class="acoes-container">
+                        <!-- COLUNA ESQUERDA: DADOS ASAAS -->
+                        <div class="acoes-asaas">
+                            <h3>🏦 Dados do Asaas</h3>
+
+                            <div id="acoesAsaasCarregando" class="asaas-info">
+                                <div class="loading-asaas">
+                                    ⏳ Carregando dados...
+                                </div>
+                            </div>
+
+                            <div id="acoesAsaasDados" style="display: none;">
+                                <div class="asaas-field-compact">
+                                    <label>Status:</label>
+                                    <span id="acoesAsaasStatus" class="status-badge">-</span>
+                                </div>
+
+                                <div id="acoesAsaasAvisoCancelada" style="display: none; margin: 10px 0; padding: 10px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; font-size: 13px;">
+                                    ⚠️ <strong>Cancelada</strong>
+                                </div>
+
+                                <div class="asaas-field-compact">
+                                    <label>ID Cobrança:</label>
+                                    <span id="acoesAsaasId" style="font-family: monospace; font-size: 12px;">-</span>
+                                </div>
+
+                                <div class="asaas-field-compact">
+                                    <label>Valor:</label>
+                                    <span id="acoesAsaasValor">-</span>
+                                </div>
+
+                                <div class="asaas-field-compact">
+                                    <label>Vencimento:</label>
+                                    <span id="acoesAsaasVencimento">-</span>
+                                </div>
+
+                                <div class="asaas-field-compact">
+                                    <label>Forma:</label>
+                                    <span id="acoesAsaasForma">-</span>
+                                </div>
+
+                                <div class="asaas-field-compact" style="margin-top: 15px;">
+                                    <a id="acoesAsaasLink" href="#" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 600;">
+                                        🔗 Ver no Asaas
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div id="acoesAsaasSemIntegracao" style="display: none; padding: 15px; background: #f3f4f6; border-radius: 6px; text-align: center; color: #6b7280; font-size: 14px;">
+                                ⚠️ Sem integração Asaas
+                            </div>
+                        </div>
+
+                        <!-- COLUNA DIREITA: BOTÕES DE AÇÃO -->
+                        <div class="acoes-botoes">
+                            <h3>⚡ Ações Disponíveis</h3>
+                            <div class="botoes-lista">
+                                <button id="btnMarcarPaga" class="btn-acao-modal btn-primary" onclick="abrirModalPagamento()">💰 Marcar como Paga</button>
+                                <button id="btnEditarConta" class="btn-acao-modal btn-primary btn-construcao" disabled>✏️ Editar Conta</button>
+                                <button id="btnEnviarWhatsApp" class="btn-acao-modal btn-secondary btn-construcao" disabled>📱 Enviar WhatsApp</button>
+                                <button id="btnEnviarEmail" class="btn-acao-modal btn-secondary btn-construcao" disabled>📧 Enviar Email</button>
+                                <button id="btnAtualizarVenc" class="btn-acao-modal btn-warning btn-construcao" disabled>🔄 Atualizar Vencimento</button>
+                                <button id="btnCancelarCobranca" class="btn-acao-modal btn-danger" onclick="abrirModalCancelamento()">❌ Cancelar Cobrança</button>
+                                <button id="btnImprimirBoleto" class="btn-acao-modal btn-secondary btn-construcao" disabled>🖨️ Imprimir Boleto</button>
+                                <button id="btnCopiarPIX" class="btn-acao-modal btn-secondary btn-construcao" disabled>📋 Copiar PIX</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB OBSERVAÇÕES -->
+                <div class="modal-tab-content" id="modalTabObservacoes">
+                    <div class="observacoes-2colunas">
+                        <!-- COLUNA ESQUERDA: OBSERVAÇÕES GERAIS -->
+                        <div class="obs-coluna">
+                            <h3>📝 Observações Gerais</h3>
+
+                            <div class="obs-form">
+                                <textarea id="obsGeralTexto" rows="4" placeholder="Digite uma observação..."></textarea>
+                                <button class="btn-adicionar-obs" onclick="adicionarObservacaoGeral()">
+                                    ➕ Adicionar Observação
+                                </button>
+                            </div>
+
+                            <div class="obs-historico">
+                                <h4>Histórico:</h4>
+                                <div class="observacoes-box" id="detObservacoes">
+                                    <p style="color: #9ca3af; font-style: italic;">Sem observações</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- COLUNA DIREITA: OBSERVAÇÕES DE PAGAMENTO -->
+                        <div class="obs-coluna">
+                            <h3>💳 Observações de Pagamento</h3>
+
+                            <div class="obs-form">
+                                <textarea id="obsPagamentoTexto" rows="4" placeholder="Digite uma observação de pagamento..."></textarea>
+                                <button class="btn-adicionar-obs" onclick="adicionarObservacaoPagamento()">
+                                    ➕ Adicionar Observação
+                                </button>
+                            </div>
+
+                            <div class="obs-historico">
+                                <h4>Histórico:</h4>
+                                <div class="observacoes-box" id="detObservacoesPagamento">
+                                    <p style="color: #9ca3af; font-style: italic;">Sem observações</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal-fechar" onclick="fecharModalDetalhes()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL: CANCELAR COBRANÇA
+         ============================================================ -->
+    <div id="modalCancelarCobranca" class="modal">
+        <div class="modal-content modal-pagamento">
+            <div class="modal-header">
+                <h2>❌ Cancelar Cobrança</h2>
+                <button class="btn-close-modal" onclick="fecharModalCancelamento()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="pagamento-container">
+                    <!-- COLUNA ESQUERDA: FORMULÁRIO -->
+                    <div class="pagamento-form">
+                        <h3>📝 Dados do Cancelamento</h3>
+                        <div class="modal-section">
+                            <div class="campo-form">
+                                <label>Conta:</label>
+                                <span id="cancelConta" class="info-destaque">-</span>
+                            </div>
+
+                            <div class="campo-form">
+                                <label>Valor:</label>
+                                <span id="cancelValor" class="info-destaque" style="color: #ef4444;">-</span>
+                            </div>
+
+                            <div class="campo-form full">
+                                <label>Motivo do Cancelamento: *</label>
+                                <textarea
+                                    id="cancelMotivo"
+                                    class="textarea-form"
+                                    rows="6"
+                                    placeholder="Descreva o motivo do cancelamento..."
+                                    required
+                                ></textarea>
+                            </div>
+
+                            <div class="campo-form full" style="display: flex; align-items: flex-start; gap: 10px;">
+                                <input
+                                    type="checkbox"
+                                    id="cancelAsaas"
+                                    checked
+                                    style="width: 18px; height: 18px; cursor: pointer; margin-top: 2px;"
+                                >
+                                <label for="cancelAsaas" style="cursor: pointer; flex: 1; margin: 0;">
+                                    Cancelar também no Asaas (se houver integração)
+                                    <div style="font-size: 12px; color: #6b7280; margin-top: 5px;">
+                                        ⚠️ Esta ação cancelará a cobrança no sistema Asaas
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="alert-info" style="background: #fee; border-color: #f88;">
+                                ⚠️ Esta ação é <strong>IRREVERSÍVEL</strong>. A cobrança será marcada como cancelada.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUNA DIREITA: STATUS DO ASAAS -->
+                    <div class="pagamento-asaas">
+                        <h3>🏦 Status no Asaas</h3>
+
+                        <div id="asaasStatusCancelamento" class="asaas-info">
+                            <div class="loading-asaas">
+                                ⏳ Buscando dados do Asaas...
+                            </div>
+                        </div>
+
+                        <div id="asaasDadosCancelamento" style="display: none;">
+                            <div class="asaas-field">
+                                <label>STATUS:</label>
+                                <span id="asaasCancelStatus" class="status-badge">-</span>
+                            </div>
+
+                            <div id="asaasAvisoCanceladaCancel" class="alert-warning" style="display: none;">
+                                ✅ <strong>Cobrança JÁ CANCELADA no Asaas.</strong><br>
+                                Será apenas marcada como cancelada no sistema local.
+                            </div>
+
+                            <div class="asaas-field">
+                                <label>ID COBRANÇA:</label>
+                                <span id="asaasCancelId">-</span>
+                            </div>
+
+                            <div class="asaas-field">
+                                <label>Valor:</label>
+                                <span id="asaasCancelValor">-</span>
+                            </div>
+
+                            <div class="asaas-field">
+                                <label>Vencimento:</label>
+                                <span id="asaasCancelVencimento">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal-secondary" onclick="fecharModalCancelamento()">Voltar</button>
+                <button class="btn-modal-primary" onclick="confirmarCancelamento()" style="background: #ef4444;">
+                    ❌ Confirmar Cancelamento
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/clientes.js?v=261029221400"></script>
+</body>
+</html>
+
+<!-- V.2610292214 -->
