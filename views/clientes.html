@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clientes - SUMMERMAX</title>
     <link rel="stylesheet" href="/css/dashboard.css">
-    <link rel="stylesheet" href="/css/clientes.css?v=261029212746">
+    <link rel="stylesheet" href="/css/clientes.css?v=2610300002">
 </head>
 <body>
     <div class="main-container">
@@ -127,72 +127,102 @@
                 <div class="tab-content">
                     <!-- Tab Dados -->
                     <div class="tab-pane active" id="tabDados">
-                        <div class="dados-grupo">
-                            <h3>📝 Dados Cadastrais</h3>
-                            <div class="dados-grid">
-                                <div class="dado-item">
-                                    <span class="dado-label">Nome:</span>
-                                    <span class="dado-valor" id="dadoNome">-</span>
+                        <!-- LAYOUT 2 COLUNAS: Dados Esquerda | Observações+Ações Direita -->
+                        <div class="dados-layout-horizontal">
+                            <!-- COLUNA ESQUERDA: Dados Cadastrais -->
+                            <div class="coluna-dados-cadastrais">
+                                <div class="dados-grupo">
+                                    <h3>📝 Dados Cadastrais</h3>
+                                    <div class="dados-grid">
+                                        <div class="dado-item">
+                                            <span class="dado-label">Nome:</span>
+                                            <span class="dado-valor" id="dadoNome">-</span>
+                                        </div>
+                                        <div class="dado-item">
+                                            <span class="dado-label">Código:</span>
+                                            <span class="dado-valor" id="dadoCodigo">-</span>
+                                        </div>
+                                        <div class="dado-item">
+                                            <span class="dado-label">CPF:</span>
+                                            <span class="dado-valor" id="dadoCpf">-</span>
+                                        </div>
+                                        <div class="dado-item">
+                                            <span class="dado-label">Apelido:</span>
+                                            <span class="dado-valor" id="dadoApelido">-</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="dado-item">
-                                    <span class="dado-label">Código:</span>
-                                    <span class="dado-valor" id="dadoCodigo">-</span>
+
+                                <div class="dados-grupo">
+                                    <h3>📞 Contato</h3>
+                                    <div class="dados-grid">
+                                        <div class="dado-item">
+                                            <span class="dado-label">Email:</span>
+                                            <span class="dado-valor" id="dadoEmail">-</span>
+                                        </div>
+                                        <div class="dado-item">
+                                            <span class="dado-label">Telefone:</span>
+                                            <span class="dado-valor" id="dadoTelefone">-</span>
+                                        </div>
+                                        <div class="dado-item">
+                                            <span class="dado-label">Celular:</span>
+                                            <span class="dado-valor" id="dadoCelular">-</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="dado-item">
-                                    <span class="dado-label">CPF:</span>
-                                    <span class="dado-valor" id="dadoCpf">-</span>
-                                </div>
-                                <div class="dado-item">
-                                    <span class="dado-label">Apelido:</span>
-                                    <span class="dado-valor" id="dadoApelido">-</span>
+
+                                <div class="dados-grupo">
+                                    <h3>📍 Endereço</h3>
+                                    <div class="dados-grid">
+                                        <div class="dado-item full">
+                                            <span class="dado-label">Logradouro:</span>
+                                            <span class="dado-valor" id="dadoEndereco">-</span>
+                                        </div>
+                                        <div class="dado-item">
+                                            <span class="dado-label">Bairro:</span>
+                                            <span class="dado-valor" id="dadoBairro">-</span>
+                                        </div>
+                                        <div class="dado-item">
+                                            <span class="dado-label">Cidade/UF:</span>
+                                            <span class="dado-valor" id="dadoCidade">-</span>
+                                        </div>
+                                        <div class="dado-item">
+                                            <span class="dado-label">CEP:</span>
+                                            <span class="dado-valor" id="dadoCep">-</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="dados-grupo">
-                            <h3>📞 Contato</h3>
-                            <div class="dados-grid">
-                                <div class="dado-item">
-                                    <span class="dado-label">Email:</span>
-                                    <span class="dado-valor" id="dadoEmail">-</span>
-                                </div>
-                                <div class="dado-item">
-                                    <span class="dado-label">Telefone:</span>
-                                    <span class="dado-valor" id="dadoTelefone">-</span>
-                                </div>
-                                <div class="dado-item">
-                                    <span class="dado-label">Celular:</span>
-                                    <span class="dado-valor" id="dadoCelular">-</span>
-                                </div>
-                            </div>
-                        </div>
+                            <!-- COLUNA DIREITA: Observações + Botões de Ação -->
+                            <div class="coluna-observacoes-acoes">
+                                <!-- Observações com Histórico -->
+                                <div class="dados-grupo observacoes-container">
+                                    <div class="observacoes-header">
+                                        <h3>📌 Observações</h3>
+                                        <button class="btn-add-obs" id="btnAdicionarObservacao" title="Adicionar observação">
+                                            ➕ Nova
+                                        </button>
+                                    </div>
 
-                        <div class="dados-grupo">
-                            <h3>📍 Endereço</h3>
-                            <div class="dados-grid">
-                                <div class="dado-item full">
-                                    <span class="dado-label">Logradouro:</span>
-                                    <span class="dado-valor" id="dadoEndereco">-</span>
+                                    <div class="observacoes-historico" id="dadoObservacoes">
+                                        <p class="texto-vazio">Sem observações</p>
+                                    </div>
                                 </div>
-                                <div class="dado-item">
-                                    <span class="dado-label">Bairro:</span>
-                                    <span class="dado-valor" id="dadoBairro">-</span>
-                                </div>
-                                <div class="dado-item">
-                                    <span class="dado-label">Cidade/UF:</span>
-                                    <span class="dado-valor" id="dadoCidade">-</span>
-                                </div>
-                                <div class="dado-item">
-                                    <span class="dado-label">CEP:</span>
-                                    <span class="dado-valor" id="dadoCep">-</span>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="dados-grupo">
-                            <h3>📌 Observações</h3>
-                            <div class="observacoes" id="dadoObservacoes">
-                                <p>Sem observações</p>
+                                <!-- Ações Rápidas (lado direito) -->
+                                <div class="acoes-rapidas-lateral">
+                                    <h3>⚡ Ações Rápidas</h3>
+                                    <button class="btn-acao-lateral" id="btnVerContasLateral">
+                                        💰 Ver Contas a Receber
+                                    </button>
+                                    <button class="btn-acao-lateral" id="btnNovaSaidaLateral">
+                                        🚤 Nova Saída
+                                    </button>
+                                    <button class="btn-acao-lateral" id="btnWhatsAppLateral">
+                                        📱 WhatsApp
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -705,8 +735,42 @@
         </div>
     </div>
 
-    <script src="/js/clientes.js?v=261029225700"></script>
+    <!-- MODAL ADICIONAR OBSERVAÇÃO -->
+    <div id="modalAdicionarObservacao" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>📝 Adicionar Observação</h2>
+                <button class="btn-close-modal" onclick="fecharModalObservacao()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="campo-form full">
+                    <label>Observação:</label>
+                    <textarea
+                        id="inputNovaObservacao"
+                        class="textarea-form"
+                        rows="6"
+                        placeholder="Digite a observação sobre este cliente..."
+                        autofocus
+                    ></textarea>
+                </div>
+
+                <div class="alert-info" style="margin-top: 15px;">
+                    ℹ️ A observação será salva com <strong>data, hora e seu usuário</strong> automaticamente.
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal-cancelar" onclick="fecharModalObservacao()">Cancelar</button>
+                <button class="btn-modal-confirmar" onclick="salvarObservacao()">
+                    💾 Salvar Observação
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/clientes.js?v=2610300002"></script>
 </body>
 </html>
 
-<!-- V.2610292258 -->
+<!-- V.2610300002 -->

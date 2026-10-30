@@ -464,6 +464,83 @@ router.get('/:codigo/contas/:codigoConta/asaas', autenticar, async (req, res) =>
     }
 });
 
+// ============================================================
+// ADICIONAR OBSERVAÇÃO AO CLIENTE
+// POST /api/clientes/:codigo/observacoes
+// ============================================================
+router.post('/:codigo/observacoes', autenticar, async (req, res) => {
+    try {
+        const { codigo } = req.params;
+        const { observacao } = req.body;
+
+        if (!observacao || !observacao.trim()) {
+            return res.status(400).json({
+                sucesso: false,
+                mensagem: 'Observação não pode estar vazia'
+            });
+        }
+
+        // Buscar cliente
+        const clienteResult = await pool.query(`
+            SELECT "Codigo", "Cliente_Obs"
+            FROM public."Cliente"
+            WHERE "Codigo" = $1
+        `, [codigo]);
+
+        if (clienteResult.rows.length === 0) {
+            return res.status(404).json({
+                sucesso: false,
+                mensagem: 'Cliente não encontrado'
+            });
+        }
+
+        const cliente = clienteResult.rows[0];
+        const obsAtuais = cliente.Cliente_Obs || '';
+
+        // Formatar nova observação com data, hora e usuário
+        const agora = new Date();
+        const dataHora = agora.toLocaleString('pt-BR', {
+            timeZone: 'America/Sao_Paulo',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const usuarioNome = req.usuario?.nome || 'Sistema';
+
+        // Construir nova entrada de observação
+        const novaEntrada = `[${dataHora} - ${usuarioNome}]\n${observacao.trim()}`;
+
+        // Adicionar no topo (nova observação primeiro)
+        const observacoesAtualizadas = obsAtuais.trim()
+            ? `${novaEntrada}\n\n${obsAtuais}`
+            : novaEntrada;
+
+        // Atualizar no banco
+        await pool.query(`
+            UPDATE public."Cliente"
+            SET "Cliente_Obs" = $1
+            WHERE "Codigo" = $2
+        `, [observacoesAtualizadas, codigo]);
+
+        res.json({
+            sucesso: true,
+            mensagem: 'Observação adicionada com sucesso',
+            observacoes: observacoesAtualizadas
+        });
+
+    } catch (error) {
+        console.error('Erro ao adicionar observação:', error);
+        res.status(500).json({
+            sucesso: false,
+            mensagem: 'Erro ao adicionar observação',
+            erro: error.message
+        });
+    }
+});
+
 export default router;
 
-// V.2610291835
+// V.2610300002

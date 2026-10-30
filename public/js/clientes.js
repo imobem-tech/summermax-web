@@ -316,13 +316,8 @@ function mostrarCliente(cliente) {
         `${cliente.Cliente_Cidade || '-'} / ${cliente.Cliente_UF || '-'}`;
     document.getElementById('dadoCep').textContent = formatarCEP(cliente.Cliente_CEP) || '-';
 
-    // Observações
-    const obsElement = document.getElementById('dadoObservacoes');
-    if (cliente.Cliente_Obs && cliente.Cliente_Obs.trim()) {
-        obsElement.innerHTML = `<p>${cliente.Cliente_Obs.replace(/\n/g, '<br>')}</p>`;
-    } else {
-        obsElement.innerHTML = '<p>Sem observações</p>';
-    }
+    // Observações - Usar renderizador de histórico
+    renderizarObservacoes(cliente.Cliente_Obs || '');
 
     // Limpar inputs
     document.getElementById('inputCodigo').value = '';
@@ -1642,10 +1637,198 @@ async function logout() {
     }
 }
 
-// V.2610292257
+// ============================================================
+// OBSERVAÇÕES DO CLIENTE
+// ============================================================
+
+// Abrir modal de observação
+function abrirModalObservacao() {
+    if (!clienteAtual) {
+        alert('Nenhum cliente selecionado!');
+        return;
+    }
+
+    document.getElementById('inputNovaObservacao').value = '';
+    document.getElementById('modalAdicionarObservacao').classList.add('show');
+    setTimeout(() => {
+        document.getElementById('inputNovaObservacao').focus();
+    }, 100);
+}
+
+// Fechar modal de observação
+function fecharModalObservacao() {
+    document.getElementById('modalAdicionarObservacao').classList.remove('show');
+}
+
+// Salvar observação
+async function salvarObservacao() {
+    const texto = document.getElementById('inputNovaObservacao').value.trim();
+
+    if (!texto) {
+        alert('Digite uma observação!');
+        return;
+    }
+
+    if (!clienteAtual) {
+        alert('Nenhum cliente selecionado!');
+        return;
+    }
+
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`/api/clientes/${clienteAtual.Codigo}/observacoes`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ observacao: texto })
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao salvar observação');
+        }
+
+        const data = await response.json();
+
+        if (data.sucesso) {
+            // Atualizar observações do cliente
+            clienteAtual.Observações = data.observacoes;
+
+            // Renderizar histórico atualizado
+            renderizarObservacoes(data.observacoes);
+
+            // Fechar modal
+            fecharModalObservacao();
+
+            alert('✅ Observação salva com sucesso!');
+        } else {
+            alert('Erro ao salvar observação: ' + data.mensagem);
+        }
+
+    } catch (error) {
+        console.error('Erro ao salvar observação:', error);
+        alert('Erro ao salvar observação. Tente novamente.');
+    }
+}
+
+// Renderizar observações como histórico
+function renderizarObservacoes(observacoes) {
+    const container = document.getElementById('dadoObservacoes');
+
+    if (!observacoes || observacoes.trim() === '') {
+        container.innerHTML = '<p class="texto-vazio">Sem observações</p>';
+        return;
+    }
+
+    // Dividir observações por quebra de linha dupla (padrão de incremento)
+    const entradas = observacoes.split('\n\n').filter(e => e.trim());
+
+    if (entradas.length === 0) {
+        container.innerHTML = '<p class="texto-vazio">Sem observações</p>';
+        return;
+    }
+
+    // Renderizar cada entrada como um card
+    let html = '';
+    entradas.forEach(entrada => {
+        const linhas = entrada.split('\n');
+        const primeiraLinha = linhas[0];
+        const restante = linhas.slice(1).join('\n');
+
+        // Extrair data/hora/usuário da primeira linha
+        // Formato esperado: "[29/10/2026 23:45 - João Silva]"
+        const match = primeiraLinha.match(/\[(.+?) - (.+?)\]/);
+
+        if (match) {
+            const dataHora = match[1];
+            const usuario = match[2];
+
+            html += `
+                <div class="obs-entry">
+                    <div class="obs-meta">
+                        <span class="obs-usuario">👤 ${usuario}</span>
+                        <span class="obs-data">📅 ${dataHora}</span>
+                    </div>
+                    <div class="obs-texto">${restante}</div>
+                </div>
+            `;
+        } else {
+            // Sem formato especial, exibir como texto simples
+            html += `
+                <div class="obs-entry">
+                    <div class="obs-texto">${entrada}</div>
+                </div>
+            `;
+        }
+    });
+
+    container.innerHTML = html;
+}
+
+// Mapear botões laterais
+document.addEventListener('DOMContentLoaded', () => {
+    // Botão adicionar observação
+    const btnAdicionarObs = document.getElementById('btnAdicionarObservacao');
+    if (btnAdicionarObs) {
+        btnAdicionarObs.addEventListener('click', abrirModalObservacao);
+    }
+
+    // Botões laterais (mapear para funções existentes)
+    const btnVerContasLateral = document.getElementById('btnVerContasLateral');
+    const btnNovaSaidaLateral = document.getElementById('btnNovaSaidaLateral');
+    const btnWhatsAppLateral = document.getElementById('btnWhatsAppLateral');
+
+    if (btnVerContasLateral) {
+        btnVerContasLateral.addEventListener('click', () => {
+            mudarTab('contas');
+        });
+    }
+
+    if (btnNovaSaidaLateral) {
+        btnNovaSaidaLateral.addEventListener('click', () => {
+            alert('🚧 Funcionalidade em desenvolvimento');
+        });
+    }
+
+    if (btnWhatsAppLateral) {
+        btnWhatsAppLateral.addEventListener('click', () => {
+            if (!clienteAtual) return;
+
+            const celular = clienteAtual.Celular;
+            if (celular) {
+                const numero = celular.replace(/\D/g, '');
+                window.open(`https://wa.me/55${numero}`, '_blank');
+            } else {
+                alert('Cliente não possui celular cadastrado');
+            }
+        });
+    }
+
+    // Fechar modal ao clicar fora
+    const modalObs = document.getElementById('modalAdicionarObservacao');
+    if (modalObs) {
+        modalObs.addEventListener('click', (e) => {
+            if (e.target === modalObs) {
+                fecharModalObservacao();
+            }
+        });
+    }
+
+    // Atalho ESC para fechar modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const modalObs = document.getElementById('modalAdicionarObservacao');
+            if (modalObs && modalObs.classList.contains('show')) {
+                fecharModalObservacao();
+            }
+        }
+    });
+});
+
+// V.2610300002
 
 // Debug: Confirmar que funções foram carregadas
-console.log('✅ CLIENTES.JS CARREGADO - V.2610292257');
-console.log('✅ Função abrirModalCancelamento existe?', typeof abrirModalCancelamento === 'function');
-console.log('✅ Função fecharModalCancelamento existe?', typeof fecharModalCancelamento === 'function');
-console.log('✅ Função confirmarCancelamento existe?', typeof confirmarCancelamento === 'function');
+console.log('✅ CLIENTES.JS CARREGADO - V.2610300002');
+console.log('✅ Função abrirModalObservacao existe?', typeof abrirModalObservacao === 'function');
+console.log('✅ Função salvarObservacao existe?', typeof salvarObservacao === 'function');
