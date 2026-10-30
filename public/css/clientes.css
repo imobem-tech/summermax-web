@@ -363,8 +363,8 @@
 
 .btn-acao {
     flex: 1;
-    background: white;
-    border: 2px solid #667eea;
+    background: transparent;
+    border: none;
     color: #667eea;
     padding: 12px 20px;
     border-radius: 6px;
@@ -1816,8 +1816,8 @@
 
 .btn-acao-lateral {
     width: 100%;
-    background: white;
-    border: 2px solid #667eea;
+    background: transparent;
+    border: none;
     color: #667eea;
     padding: 14px 16px;
     border-radius: 6px;
@@ -1852,4 +1852,4 @@
     }
 }
 
-/* V.2610300002 */
+/* V.2610300011 */
