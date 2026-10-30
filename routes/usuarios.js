@@ -1,5 +1,5 @@
 // ============================================================
-// ROTAS DE USUÁRIOS - V.2610292330
+// ROTAS DE USUÁRIOS - V.2610292351
 // API de gerenciamento de usuários
 // ============================================================
 
@@ -26,8 +26,8 @@ router.get('/', autenticar, async (req, res) => {
                 u.nivel_acesso,
                 u.primeiro_acesso,
                 u.ativo,
-                u.data_criacao,
-                u.ultimo_login,
+                u.data_cadastro,
+                u.ultimo_acesso,
                 g.nome as nome_grupo,
                 e.nome as nome_empresa
             FROM public.mae_usuario u
@@ -119,7 +119,7 @@ router.post('/', autenticar, async (req, res) => {
                 nivel_acesso,
                 primeiro_acesso,
                 ativo,
-                data_criacao
+                data_cadastro
             ) VALUES ($1, $2, $3, $4, $5, $6, true, true, NOW())
             RETURNING
                 id_usuario,
@@ -127,7 +127,7 @@ router.post('/', autenticar, async (req, res) => {
                 email,
                 nivel_acesso,
                 ativo,
-                data_criacao
+                data_cadastro
         `, [
             id_grupo,
             id_empresa || null,
@@ -211,4 +211,4 @@ router.get('/empresas', autenticar, async (req, res) => {
 
 export default router;
 
-// V.2610292330
+// V.2610292351
