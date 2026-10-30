@@ -304,6 +304,7 @@ function mostrarCliente(cliente) {
     document.getElementById('dadoCodigo').textContent = cliente.Codigo || '-';
     document.getElementById('dadoCpf').textContent = formatarCPF(cliente.Cliente_CPF) || '-';
     document.getElementById('dadoApelido').textContent = cliente.Cliente_Apelido || '-';
+    document.getElementById('dadoEmitirCobranca').textContent = cliente.Alerta_Emite_Carta ? '✅ SIM' : '❌ NÃO';
 
     // Contato
     document.getElementById('dadoEmail').textContent = cliente.Cliente_e_mail || '-';
@@ -1827,9 +1828,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// V.2610300013
+// V.2610300018
 
 // Debug: Confirmar que funções foram carregadas
-console.log('✅ CLIENTES.JS CARREGADO - V.2610300013');
+console.log('✅ CLIENTES.JS CARREGADO - V.2610300018');
 console.log('✅ Função abrirModalObservacao existe?', typeof abrirModalObservacao === 'function');
 console.log('✅ Função salvarObservacao existe?', typeof salvarObservacao === 'function');
