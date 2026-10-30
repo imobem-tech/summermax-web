@@ -1,5 +1,5 @@
 /* ============================================================
-   CLIENTES.CSS - V.2610291912
+   CLIENTES.CSS - V.2610292249
    Estilos da tela de clientes
    ============================================================ */
 
@@ -939,10 +939,20 @@
 .btn-acao-modal.btn-danger {
     background: #ef4444;
     color: white;
+    padding: 14px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    min-height: 48px;
 }
 
-.btn-acao-modal.btn-danger:hover {
+.btn-acao-modal.btn-danger:hover:not(:disabled) {
     background: #dc2626;
+}
+
+.btn-acao-modal.btn-danger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(50%);
 }
 
 .modal-footer {
