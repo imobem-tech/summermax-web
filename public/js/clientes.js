@@ -1177,7 +1177,7 @@ async function confirmarPagamento() {
         const observacoes = document.getElementById('pagObservacoes').value.trim();
         const formaPagamento = document.getElementById('pagPortador').value;
 
-        if (!dataPagamento || !valorPago || !formaPagamento || !observacoes) {
+        if (!dataPagamento || !valorPago || !formaPagamento) {
             alert('⚠️ Preencha todos os campos obrigatórios!');
             return;
         }
@@ -1627,10 +1627,10 @@ async function logout() {
     }
 }
 
-// V.2610292214
+// V.2610292252
 
 // Debug: Confirmar que funções foram carregadas
-console.log('✅ CLIENTES.JS CARREGADO - V.2610292214');
+console.log('✅ CLIENTES.JS CARREGADO - V.2610292252');
 console.log('✅ Função abrirModalCancelamento existe?', typeof abrirModalCancelamento === 'function');
 console.log('✅ Função fecharModalCancelamento existe?', typeof fecharModalCancelamento === 'function');
 console.log('✅ Função confirmarCancelamento existe?', typeof confirmarCancelamento === 'function');
