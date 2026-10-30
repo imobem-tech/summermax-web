@@ -1,0 +1,515 @@
+// ============================================================
+// ⚠️ BACKUP: 2606221645_orc_novo.js
+// Data do backup: 22/06/2026 16:45
+// Arquivo original: C:\Users\NOTEBOOK\projetos\summermax-web\public\js\orc_novo.js — V.2606221645
+// ============================================================
+//
+// MOTIVO DO BACKUP:
+// Simplificação do formulário de orçamento - removendo campos de pagamento/parcelamento
+//
+// PROBLEMA RESOLVIDO:
+// - Formulário continha campos de forma_pagamento, parcelas e dias_vencimento
+// - Esses campos devem ser definidos DEPOIS, na etapa de geração de boletos
+// - Campo "descricao" foi renomeado para "titulo" para melhor semântica
+//
+// FUNÇÕES ALTERADAS:
+// - calcularResumo(): removido cálculo de valor_parcela e qtdParcelas
+// - salvarOrcamento(): removido envio de forma_pagamento, qtd_parcelas, dias_vencimento
+// - salvarOrcamento(): mudado campo "descricao" para "titulo"
+// - Event listeners: removido listener de qtdParcelas
+//
+// SOLUÇÃO:
+// - Formulário simplificado: apenas embarcação, título, itens, taxa e resumo
+// - Resumo mostra apenas: Valor Serviços, Taxa, Total (sem parcelas)
+// - Campos de pagamento serão implementados na próxima fase (geração de cobranças)
+// - Status salvo como RASCUNHO
+//
+// ============================================================
+
+// ============================================================
+// SCRIPT - NOVO ORÇAMENTO
+// V.2606221645
+// ============================================================
+
+let itens = [];
+let cotistas = [];
+let embarcacoes = [];
+let embarcacoesOriginal = []; // Lista completa sem filtro
+
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🚀 Iniciando formulário de orçamento...');
+
+    try {
+        // Botões
+        document.getElementById('btnVoltar').addEventListener('click', () => window.location.href = '/orcamentos.html');
+        document.getElementById('btnCancelar').addEventListener('click', () => window.location.href = '/orcamentos.html');
+        document.getElementById('btnAddItem').addEventListener('click', adicionarItem);
+
+        // Eventos de cálculo
+        document.getElementById('taxaServico').addEventListener('input', calcularResumo);
+
+        // Seleção de embarcação
+        document.getElementById('embarcacao').addEventListener('change', carregarCotistas);
+
+        // Submit
+        document.getElementById('formOrcamento').addEventListener('submit', salvarOrcamento);
+
+        // Carregar dados iniciais
+        console.log('📡 Carregando embarcações...');
+        await carregarEmbarcacoes();
+
+        console.log('📡 Carregando fornecedores...');
+        await carregarFornecedores();
+
+        // Adicionar primeiro item
+        console.log('➕ Adicionando primeiro item...');
+        adicionarItem();
+
+        console.log('✅ Formulário pronto!');
+    } catch (err) {
+        console.error('❌ Erro ao inicializar formulário:', err);
+        alert('Erro ao carregar formulário. Verifique o console (F12).');
+    }
+});
+
+async function carregarEmbarcacoes() {
+    try {
+        console.log('  → Buscando select de embarcação...');
+        const select = document.getElementById('embarcacao');
+        if (!select) {
+            console.error('  ❌ Select de embarcação não encontrado!');
+            return;
+        }
+
+        select.innerHTML = '<option value="">Carregando...</option>';
+
+        console.log('  → Fazendo requisição para /api/embarcacoes...');
+        const response = await fetch('/api/embarcacoes', {
+            credentials: 'include'
+        });
+
+        console.log('  → Status:', response.status);
+        if (!response.ok) throw new Error(`Erro ${response.status}: ${await response.text()}`);
+
+        embarcacoes = await response.json();
+        embarcacoesOriginal = embarcacoes; // Salvar lista completa
+        console.log(`  ✓ ${embarcacoes.length} embarcações carregadas`);
+
+        // Inicializar filtros APÓS carregar a lista
+        inicializarFiltros();
+
+        select.innerHTML = '<option value="">Selecione uma embarcação...</option>';
+        embarcacoes.forEach(emb => {
+            // Formato: "576 - ALLMAX Z2"
+            const option = document.createElement('option');
+            option.value = emb.id;
+            option.textContent = `${emb.num_pb} - ${emb.nome || 'SEM NOME'}`;
+            option.dataset.numPb = emb.num_pb;
+            option.dataset.nome = (emb.nome || '').toLowerCase();
+            select.appendChild(option);
+        });
+
+        console.log('  ✓ Select populado com sucesso');
+
+    } catch (err) {
+        console.error('  ❌ Erro ao carregar embarcações:', err);
+        const select = document.getElementById('embarcacao');
+        if (select) {
+            select.innerHTML = '<option value="">⚠️ Erro ao carregar - Verifique console</option>';
+        }
+        throw err;
+    }
+}
+
+async function carregarFornecedores() {
+    try {
+        const select = document.getElementById('fornecedor');
+        select.innerHTML = '<option value="">Nenhum</option>';
+        // TODO: Criar rota GET /api/fornecedores
+    } catch (err) {
+        console.error('Erro ao carregar fornecedores:', err);
+    }
+}
+
+async function carregarCotistas() {
+    const idEmbarcacao = document.getElementById('embarcacao').value;
+    console.log('👥 Carregando cotistas para embarcação:', idEmbarcacao);
+
+    if (!idEmbarcacao) {
+        document.getElementById('cotistasSection').style.display = 'none';
+        cotistas = [];
+        return;
+    }
+
+    try {
+        const url = `/api/embarcacoes/${idEmbarcacao}/cotistas`;
+        console.log('  → URL:', url);
+
+        const response = await fetch(url, {
+            credentials: 'include'
+        });
+
+        console.log('  → Status:', response.status);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('  ❌ Erro:', errorText);
+            throw new Error(`Erro ${response.status}: ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('  → Dados recebidos:', data);
+
+        cotistas = data.cotistas || [];
+        console.log(`  ✓ ${cotistas.length} cotistas encontrados`);
+
+        const lista = document.getElementById('listaCotistas');
+        if (cotistas.length === 0) {
+            lista.innerHTML = '<p style="color: #666; padding: 12px;">⚠️ Nenhum cotista encontrado para esta embarcação</p>';
+        } else {
+            lista.innerHTML = cotistas.map(c => `
+                <div class="cotista-card">
+                    <div class="nome">${c.nome || 'Nome não disponível'}</div>
+                    <div class="info">Grupo: ${c.grupo_letra || 'N/A'} • ${c.percentual}%</div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('cotistasSection').style.display = 'block';
+        console.log('  ✓ Cotistas exibidos');
+
+    } catch (err) {
+        console.error('  ❌ Erro ao carregar cotistas:', err);
+        alert(`Erro ao carregar cotistas: ${err.message}\n\nVeja o console (F12) para mais detalhes.`);
+    }
+}
+
+function adicionarItem() {
+    const id = Date.now();
+    const item = {
+        id,
+        descricao: '',
+        quantidade: 1,
+        valor_unitario: 0,
+        valor_total: 0
+    };
+
+    itens.push(item);
+    renderizarItens();
+}
+
+function removerItem(id) {
+    itens = itens.filter(i => i.id !== id);
+    renderizarItens();
+    calcularResumo();
+}
+
+function renderizarItens() {
+    const container = document.getElementById('listaItens');
+
+    container.innerHTML = itens.map((item, index) => `
+        <div class="item-row">
+            <div class="item-header">
+                <h5>Item ${index + 1}</h5>
+                ${itens.length > 1 ? `<button type="button" class="btn-remove-item" onclick="removerItem(${item.id})">🗑️ Remover</button>` : ''}
+            </div>
+            <div class="form-row">
+                <div class="form-group" style="flex: 3;">
+                    <label>Descrição *</label>
+                    <input type="text" data-item="${item.id}" data-field="descricao" value="${item.descricao}" required placeholder="Ex: Troca de óleo e filtros">
+                </div>
+                <div class="form-group">
+                    <label>Quantidade</label>
+                    <input type="number" data-item="${item.id}" data-field="quantidade" value="${item.quantidade}" min="0.01" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Valor Unitário</label>
+                    <input type="number" data-item="${item.id}" data-field="valor_unitario" value="${item.valor_unitario}" min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Total</label>
+                    <input type="text" value="${formatarMoeda(item.valor_total)}" disabled>
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    // Adicionar event listeners
+    container.querySelectorAll('input[data-item]').forEach(input => {
+        input.addEventListener('input', (e) => {
+            const id = parseInt(e.target.dataset.item);
+            const field = e.target.dataset.field;
+            const valor = e.target.value;
+
+            const item = itens.find(i => i.id === id);
+            if (item) {
+                item[field] = field === 'descricao' ? valor : parseFloat(valor) || 0;
+
+                // Recalcular total do item
+                if (field === 'quantidade' || field === 'valor_unitario') {
+                    item.valor_total = item.quantidade * item.valor_unitario;
+                    renderizarItens();
+                    calcularResumo();
+                }
+            }
+        });
+    });
+}
+
+function calcularResumo() {
+    const valorServicos = itens.reduce((sum, item) => sum + item.valor_total, 0);
+    const taxaPerc = parseFloat(document.getElementById('taxaServico').value) || 0;
+    const taxaValor = valorServicos * (taxaPerc / 100);
+    const valorTotal = valorServicos + taxaValor;
+
+    document.getElementById('resumoServicos').textContent = formatarMoeda(valorServicos);
+    document.getElementById('resumoTaxaPerc').textContent = taxaPerc.toFixed(2);
+    document.getElementById('resumoTaxa').textContent = formatarMoeda(taxaValor);
+    document.getElementById('resumoTotal').textContent = formatarMoeda(valorTotal);
+}
+
+async function salvarOrcamento(e) {
+    e.preventDefault();
+
+    const idEmbarcacao = document.getElementById('embarcacao').value;
+    if (!idEmbarcacao) {
+        alert('Selecione uma embarcação');
+        return;
+    }
+
+    if (itens.length === 0 || itens.every(i => !i.descricao)) {
+        alert('Adicione pelo menos um item ao orçamento');
+        return;
+    }
+
+    const dados = {
+        id_embarcacao: parseInt(idEmbarcacao),
+        id_fornecedor: document.getElementById('fornecedor').value || null,
+        titulo: document.getElementById('titulo').value,
+        observacao: document.getElementById('observacao').value,
+        taxa_servico_perc: parseFloat(document.getElementById('taxaServico').value),
+        itens: itens.filter(i => i.descricao).map(i => ({
+            descricao: i.descricao,
+            quantidade: i.quantidade,
+            valor_unitario: i.valor_unitario,
+            valor_total: i.valor_total
+        }))
+    };
+
+    const btnSalvar = document.getElementById('btnSalvar');
+    btnSalvar.disabled = true;
+    btnSalvar.textContent = 'Salvando...';
+
+    try {
+        const response = await fetch('/api/orcamentos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(dados)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(`✅ Orçamento ${result.numero} criado com sucesso!`);
+            window.location.href = '/orcamentos.html';
+        } else {
+            alert(`❌ Erro: ${result.erro}`);
+            btnSalvar.disabled = false;
+            btnSalvar.textContent = 'Salvar Orçamento';
+        }
+
+    } catch (err) {
+        console.error('Erro ao salvar orçamento:', err);
+        alert('❌ Erro ao salvar orçamento');
+        btnSalvar.disabled = false;
+        btnSalvar.textContent = 'Salvar Orçamento';
+    }
+}
+
+function formatarMoeda(valor) {
+    if (!valor) return 'R$ 0,00';
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    }).format(valor);
+}
+
+// V.2606221645
+
+// ============================================================
+// Função de filtro de embarcações - V.2606211805
+// ============================================================
+function filtrarEmbarcacoes(abrirCombo = false) {
+    const filtroCodigo = document.getElementById('filtroCodigo');
+    const filtroNome = document.getElementById('filtroNome');
+    const select = document.getElementById('embarcacao');
+
+    const valorCodigo = filtroCodigo.value.trim();
+    const valorNome = filtroNome.value.trim().toLowerCase();
+
+    // Filtrar lista (busca parcial)
+    let listaFiltrada = embarcacoesOriginal;
+
+    if (valorCodigo) {
+        listaFiltrada = listaFiltrada.filter(emb =>
+            String(emb.num_pb).includes(valorCodigo)
+        );
+    }
+
+    if (valorNome) {
+        listaFiltrada = listaFiltrada.filter(emb =>
+            (emb.nome || '').toLowerCase().includes(valorNome)
+        );
+    }
+
+    // Atualizar select
+    select.innerHTML = '<option value="">Selecione...</option>';
+    listaFiltrada.forEach(emb => {
+        const option = document.createElement('option');
+        option.value = emb.id;
+        option.textContent = `${emb.num_pb} - ${emb.nome}`;
+        option.dataset.numPb = emb.num_pb;
+        select.appendChild(option);
+    });
+
+    console.log(`🔍 Filtro aplicado: ${listaFiltrada.length} embarcações`);
+
+    // Abrir combo apenas se solicitado (ao sair do campo nome)
+    if (abrirCombo && listaFiltrada.length > 0) {
+        select.focus();
+        select.size = Math.min(listaFiltrada.length + 1, 10); // Abrir como lista
+        setTimeout(() => { select.size = 1; }, 5000); // Fechar após 5s
+    }
+}
+
+// Buscar embarcação por código e carregar cotistas direto
+async function buscarPorCodigo() {
+    const filtroCodigo = document.getElementById('filtroCodigo');
+    const valorCodigo = filtroCodigo.value.trim();
+
+    if (!valorCodigo) return;
+
+    // Buscar embarcação com esse Num_PB
+    const embarcacao = embarcacoesOriginal.find(emb =>
+        String(emb.num_pb) === valorCodigo
+    );
+
+    if (embarcacao) {
+        console.log(`✅ Embarcação ${valorCodigo} encontrada, carregando cotistas...`);
+
+        // Selecionar no combo (sem triggerar o evento)
+        const select = document.getElementById('embarcacao');
+        select.value = embarcacao.id;
+
+        // Carregar cotistas direto
+        await carregarCotistasPorId(embarcacao.id);
+    } else {
+        console.log(`⚠️ Embarcação ${valorCodigo} não encontrada`);
+    }
+}
+
+// Função auxiliar para carregar cotistas por ID
+async function carregarCotistasPorId(idEmbarcacao) {
+    if (!idEmbarcacao) {
+        document.getElementById('cotistasSection').style.display = 'none';
+        cotistas = [];
+        return;
+    }
+
+    try {
+        const url = `/api/embarcacoes/${idEmbarcacao}/cotistas`;
+        console.log('👥 Carregando cotistas:', url);
+
+        const response = await fetch(url, { credentials: 'include' });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Erro ${response.status}: ${errorText}`);
+        }
+
+        const data = await response.json();
+        cotistas = data.cotistas || [];
+        console.log(`✅ ${cotistas.length} cotistas encontrados`);
+
+        const lista = document.getElementById('listaCotistas');
+        if (cotistas.length === 0) {
+            lista.innerHTML = '<p style="color: #666; padding: 12px;">⚠️ Nenhum cotista encontrado</p>';
+        } else {
+            lista.innerHTML = cotistas.map(c => `
+                <div class="cotista-card">
+                    <div class="nome">${c.nome || 'Nome não disponível'}</div>
+                    <div class="info">Grupo: ${c.grupo_letra || 'N/A'} • ${c.percentual}%</div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('cotistasSection').style.display = 'block';
+
+    } catch (err) {
+        console.error('❌ Erro ao carregar cotistas:', err);
+        alert(`Erro: ${err.message}`);
+    }
+}
+
+// Inicializar event listeners dos filtros APÓS carregar embarcações
+function inicializarFiltros() {
+    const filtroCodigo = document.getElementById('filtroCodigo');
+    const filtroNome = document.getElementById('filtroNome');
+
+    if (filtroCodigo) {
+        // Ao focar no campo Embarcação: limpar ambos os campos
+        filtroCodigo.addEventListener('focus', () => {
+            filtroCodigo.value = '';
+            filtroNome.value = '';
+            if (embarcacoesOriginal.length > 0) {
+                filtrarEmbarcacoes(false);
+            }
+        });
+
+        // Ao digitar: filtrar
+        filtroCodigo.addEventListener('input', () => {
+            if (embarcacoesOriginal.length > 0) {
+                filtrarEmbarcacoes(false);
+            }
+        });
+
+        // Ao sair (blur) ou Enter: buscar e carregar cotistas
+        filtroCodigo.addEventListener('blur', buscarPorCodigo);
+        filtroCodigo.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                buscarPorCodigo();
+            }
+        });
+    }
+
+    if (filtroNome) {
+        // Ao focar no Buscar Nome: limpar ambos os campos
+        filtroNome.addEventListener('focus', () => {
+            filtroCodigo.value = '';
+            filtroNome.value = '';
+            if (embarcacoesOriginal.length > 0) {
+                filtrarEmbarcacoes(false); // NÃO abrir combo ainda
+            }
+        });
+
+        // Ao digitar: apenas filtrar (NÃO abrir combo)
+        filtroNome.addEventListener('input', () => {
+            if (embarcacoesOriginal.length > 0) {
+                filtrarEmbarcacoes(false);
+            }
+        });
+
+        // Ao sair do campo: aplicar filtro E abrir combo
+        filtroNome.addEventListener('blur', () => {
+            if (filtroNome.value.trim() && embarcacoesOriginal.length > 0) {
+                setTimeout(() => {
+                    filtrarEmbarcacoes(true); // AGORA SIM abre o combo
+                }, 100);
+            }
+        });
+    }
+
+    console.log('✅ Filtros inicializados');
+}
