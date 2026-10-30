@@ -36,8 +36,13 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-// Middleware de autenticação (reutilizar do sistema)
+// Middleware de autenticação (TEMPORARIAMENTE DESABILITADO para desenvolvimento)
 function autenticar(req, res, next) {
+  // TODO: Implementar validação JWT real
+  req.userId = 'dev-user'; // Usuário de desenvolvimento
+  next(); // Permite acesso sem token (APENAS PARA DESENVOLVIMENTO)
+
+  /* CÓDIGO ORIGINAL COMENTADO - REATIVAR EM PRODUÇÃO:
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(401).json({ erro: 'Token não fornecido' });
@@ -45,15 +50,14 @@ function autenticar(req, res, next) {
 
   const token = authHeader.replace('Bearer ', '');
 
-  // Aqui você deve validar o JWT token
-  // Por simplicidade, vamos apenas verificar se existe
   if (!token) {
     return res.status(401).json({ erro: 'Token inválido' });
   }
 
-  // TODO: Decodificar e validar JWT
-  req.userId = 'web-user'; // Placeholder
+  // Validar JWT aqui
+  req.userId = 'web-user';
   next();
+  */
 }
 
 // ============================================================
