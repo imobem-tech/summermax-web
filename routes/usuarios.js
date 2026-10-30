@@ -30,9 +30,9 @@ router.get('/', autenticar, async (req, res) => {
                 u.ultimo_login,
                 g.nome as nome_grupo,
                 e.nome as nome_empresa
-            FROM public."Usuarios" u
-            LEFT JOIN public."Grupos" g ON u.id_grupo = g.id_grupo
-            LEFT JOIN public."Empresas" e ON u.id_empresa = e.id_empresa
+            FROM public.mae_usuario u
+            LEFT JOIN public.mae_grupo g ON u.id_grupo = g.id_grupo
+            LEFT JOIN public.mae_empresa e ON u.id_empresa = e.id_empresa
             ORDER BY u.nome
         `);
 
@@ -94,7 +94,7 @@ router.post('/', autenticar, async (req, res) => {
         // Verificar se email já existe
         const emailExiste = await pool.query(`
             SELECT id_usuario
-            FROM public."Usuarios"
+            FROM public.mae_usuario
             WHERE email = $1
         `, [email.toLowerCase()]);
 
@@ -110,7 +110,7 @@ router.post('/', autenticar, async (req, res) => {
 
         // Inserir usuário
         const result = await pool.query(`
-            INSERT INTO public."Usuarios" (
+            INSERT INTO public.mae_usuario (
                 id_grupo,
                 id_empresa,
                 nome,
@@ -163,7 +163,7 @@ router.get('/grupos', autenticar, async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT id_grupo, nome
-            FROM public."Grupos"
+            FROM public.mae_grupo
             ORDER BY nome
         `);
 
@@ -190,7 +190,7 @@ router.get('/empresas', autenticar, async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT id_empresa, nome
-            FROM public."Empresas"
+            FROM public.mae_empresa
             ORDER BY nome
         `);
 
