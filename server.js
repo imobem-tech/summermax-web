@@ -1,7 +1,8 @@
 // ============================================================
 // SERVIDOR EXPRESS - SISTEMA WEB SUMMERMAX
-// V.2610301220
+// V.2610301230
 // + Sistema de orçamentos web estilo chat (shared/orcamentos-core.js)
+// + CORRIGIDO: Imports e rotas funcionando
 // ============================================================
 
 import express from 'express';
@@ -14,7 +15,7 @@ import { fileURLToPath } from 'url';
 // Importar rotas
 import authRoutes from './routes/auth.js';
 import orcamentosRoutes from './routes/orc_orcamentos.js';
-// import orcamentosWebRoutes from './routes/orcamentos.js'; // TEMPORARIAMENTE COMENTADO PARA DEBUG
+import orcamentosWebRoutes from './routes/orcamentos.js';
 import embarcacoesRoutes from './routes/embarcacoes.js';
 import clientesRoutes from './routes/clientes.js';
 import contasRoutes from './routes/contas.js';
@@ -56,7 +57,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/orc', orcamentosRoutes);
 
 // API de orçamentos (novo - estilo chat)
-// app.use('/api/orcamentos', orcamentosWebRoutes); // TEMPORARIAMENTE COMENTADO PARA DEBUG
+app.use('/api/orcamentos', orcamentosWebRoutes);
 
 // API de embarcações
 app.use('/api/embarcacoes', embarcacoesRoutes);
@@ -105,9 +106,9 @@ app.get('/orc_rateio_modal.html', (req, res) => {
 });
 
 // Orçamentos Web (novo - estilo chat)
-// app.get('/orcamentos', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'views', 'orcamentos.html'));
-// }); // TEMPORARIAMENTE COMENTADO PARA DEBUG
+app.get('/orcamentos', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'orcamentos.html'));
+});
 
 // Health check
 app.get('/health', (req, res) => {
