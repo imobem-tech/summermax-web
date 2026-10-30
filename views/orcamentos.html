@@ -3,47 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Orçamentos - SummerMax</title>
-    <link rel="stylesheet" href="/css/orcamentos.css?v=2610301210">
+    <title>Orçamentos (Chat) - SUMMERMAX</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/orcamentos.css?v=2610300911">
 </head>
 <body>
     <!-- Header -->
-    <div class="header">
-        <div class="header-content">
-            <h1>💼 Sistema de Orçamentos</h1>
-            <div class="header-info">
-                <span id="usuarioNome">Carregando...</span>
-                <button id="btnVoltar" class="btn-voltar">← Voltar</button>
-            </div>
+    <header class="header">
+        <div class="header-left">
+            <h1 class="logo">SUMMERMAX</h1>
         </div>
-    </div>
+        <div class="header-right">
+            <span id="nomeUsuario" class="user-name">Carregando...</span>
+            <button id="btnLogout" class="btn-logout">Sair</button>
+        </div>
+    </header>
 
     <!-- Container Principal -->
-    <div class="container">
-        <!-- Área de Chat -->
-        <div class="chat-container">
-            <div class="chat-messages" id="chatMessages">
-                <!-- Indicador de digitação -->
-                <div class="typing-indicator" id="typingIndicator">
-                    <div class="typing-dots">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
+    <div class="main-container">
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <nav class="menu">
+                <a href="/dashboard.html" class="menu-item">
+                    📊 Dashboard
+                </a>
+                <div class="menu-section">Cadastros</div>
+                <a href="/clientes.html" class="menu-item">
+                    👥 Clientes
+                </a>
+                <a href="/embarcacoes.html" class="menu-item">
+                    🚤 Embarcações
+                </a>
+                <a href="/fornecedores.html" class="menu-item">
+                    🚚 Fornecedores
+                </a>
+
+                <div class="menu-section">Operacional</div>
+                <a href="/orcamentos.html" class="menu-item">
+                    📝 Orçamentos
+                </a>
+                <a href="/orcamentos" class="menu-item active">
+                    💬 Orçamentos (Chat)
+                </a>
+
+                <div class="menu-section">Financeiro</div>
+                <a href="/contas-receber.html" class="menu-item">
+                    💰 Contas a Receber
+                </a>
+
+                <div class="menu-section">Configurações</div>
+                <a href="/usuarios.html" class="menu-item">
+                    👤 Usuários
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="content">
+            <div class="page-header">
+                <h2>💬 Orçamentos (Chat)</h2>
+                <p class="subtitle">Sistema de orçamentos estilo WhatsApp</p>
             </div>
 
-            <!-- Input -->
-            <div class="chat-input">
-                <input
-                    type="text"
-                    id="comandoInput"
-                    placeholder="Digite o número da opção ou comando..."
-                    autocomplete="off"
-                >
-                <button id="btnEnviar">Enviar ➤</button>
+            <!-- Área de Chat -->
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Indicador de digitação -->
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input -->
+                <div class="chat-input">
+                    <input
+                        type="text"
+                        id="comandoInput"
+                        placeholder="Digite o número da opção ou comando..."
+                        autocomplete="off"
+                    >
+                    <button id="btnEnviar">Enviar ➤</button>
+                </div>
             </div>
-        </div>
+        </main>
     </div>
 
     <!-- Loading Overlay -->
@@ -52,7 +98,8 @@
         <p>Carregando...</p>
     </div>
 
-    <script src="/js/orcamentos.js?v=2610301210"></script>
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/orcamentos.js?v=2610300911"></script>
 </body>
 </html>
-<!-- V.2610301210 -->
+<!-- V.2610300911 -->

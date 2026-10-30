@@ -1,103 +1,22 @@
 /* ============================================================
-   web-app/public/css/orcamentos.css — V.2610301210
+   web-app/public/css/orcamentos.css — V.2610300911
    ESTILOS DO SISTEMA DE ORÇAMENTOS - INTERFACE CHAT
+   Integrado com layout do dashboard
    ============================================================ */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
 /* ============================================================
-   HEADER
-   ============================================================ */
-
-.header {
-    background: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header h1 {
-    color: #2c3e50;
-    font-size: 22px;
-    margin: 0;
-}
-
-.header-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.header-info span {
-    color: #6b7280;
-    font-size: 14px;
-}
-
-.btn-voltar {
-    background: #667eea;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-
-.btn-voltar:hover {
-    background: #5568d3;
-    transform: translateX(-2px);
-}
-
-/* ============================================================
-   CONTAINER
-   ============================================================ */
-
-.container {
-    flex: 1;
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 0 20px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-/* ============================================================
-   CHAT CONTAINER
+   CHAT CONTAINER (dentro do .content do dashboard)
    ============================================================ */
 
 .chat-container {
     background: #e5ddd5;
     border-radius: 12px;
-    height: calc(100vh - 160px);
+    height: calc(100vh - 200px);
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     overflow: hidden;
+    margin-top: 20px;
 }
 
 .chat-messages {
