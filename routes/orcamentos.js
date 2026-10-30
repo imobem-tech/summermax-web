@@ -26,7 +26,7 @@ import {
   ESTADOS,
   CONSTANTES,
   QUERIES
-} from '../../shared/orcamentos-core.js';
+} from '../shared/orcamentos-core.js';
 
 const router = express.Router();
 
