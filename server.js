@@ -16,6 +16,7 @@ import orcamentosRoutes from './routes/orc_orcamentos.js';
 import embarcacoesRoutes from './routes/embarcacoes.js';
 import clientesRoutes from './routes/clientes.js';
 import contasRoutes from './routes/contas.js';
+import usuariosRoutes from './routes/usuarios.js';
 
 // Configurar variáveis de ambiente
 dotenv.config();
@@ -61,6 +62,9 @@ app.use('/api/clientes', clientesRoutes);
 // API de contas a receber
 app.use('/api/contas', contasRoutes);
 
+// API de usuários
+app.use('/api/usuarios', usuariosRoutes);
+
 // Rota raiz (login)
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'login.html'));
@@ -74,6 +78,11 @@ app.get('/dashboard.html', (req, res) => {
 // Clientes
 app.get('/clientes.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'clientes.html'));
+});
+
+// Usuários
+app.get('/usuarios.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'usuarios.html'));
 });
 
 // Orçamentos

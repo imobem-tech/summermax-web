@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuários - SUMMERMAX</title>
+    <link rel="stylesheet" href="/css/usuarios.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>👥 Gerenciamento de Usuários</h1>
+            <button onclick="voltarDashboard()" class="btn-voltar">← Voltar ao Dashboard</button>
+        </header>
+
+        <div class="conteudo">
+            <!-- FORMULÁRIO NOVO USUÁRIO -->
+            <div class="card">
+                <h2>➕ Novo Usuário</h2>
+
+                <form id="formNovoUsuario" onsubmit="cadastrarUsuario(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nome Completo: *</label>
+                            <input type="text" id="nome" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email: *</label>
+                            <input type="email" id="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Senha Inicial: *</label>
+                            <div class="senha-container">
+                                <input type="password" id="senha" required minlength="8">
+                                <button type="button" onclick="toggleSenha('senha')" class="btn-toggle">👁️</button>
+                            </div>
+                            <small>Mínimo 8 caracteres</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Confirmar Senha: *</label>
+                            <div class="senha-container">
+                                <input type="password" id="confirmarSenha" required minlength="8">
+                                <button type="button" onclick="toggleSenha('confirmarSenha')" class="btn-toggle">👁️</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Grupo: *</label>
+                            <select id="grupo" required>
+                                <option value="">Carregando...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Empresa:</label>
+                            <select id="empresa">
+                                <option value="">Todas (opcional)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Nível de Acesso: *</label>
+                            <select id="nivelAcesso" required>
+                                <option value="ADMIN_EMPRESA">Admin Empresa</option>
+                                <option value="OPERADOR">Operador</option>
+                                <option value="FINANCEIRO">Financeiro</option>
+                                <option value="CONSULTA">Consulta</option>
+                                <option value="MASTER_GRUPO">Master Grupo</option>
+                                <option value="SUPER_ADMIN">Super Admin</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="primeiroAcesso" checked>
+                                Forçar troca de senha no primeiro login
+                            </label>
+                        </div>
+
+                        <div class="form-group full">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="ativo" checked>
+                                Usuário ativo
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" onclick="limparFormulario()" class="btn-cancelar">Limpar</button>
+                        <button type="submit" class="btn-salvar">✅ Cadastrar Usuário</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- LISTA DE USUÁRIOS -->
+            <div class="card">
+                <h2>📋 Usuários Cadastrados</h2>
+                <div id="listaUsuarios" class="lista-usuarios">
+                    <p class="carregando">Carregando usuários...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/usuarios.js"></script>
+</body>
+</html>
+
+<!-- V.2610292330 -->
