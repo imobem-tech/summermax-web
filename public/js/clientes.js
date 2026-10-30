@@ -1150,6 +1150,21 @@ async function buscarDadosAsaasPagamento(codigoConta) {
             asaas.dueDate ? formatarData(asaas.dueDate) : '-';
         document.getElementById('asaasPagForma').textContent = asaas.billingType || '-';
 
+        // Mostrar Data de Pagamento e Valor Líquido se existirem
+        if (asaas.paymentDate) {
+            document.getElementById('asaasPagDataPagamento').textContent = formatarData(asaas.paymentDate);
+            document.getElementById('asaasPagDataPagamentoField').style.display = 'block';
+        } else {
+            document.getElementById('asaasPagDataPagamentoField').style.display = 'none';
+        }
+
+        if (asaas.netValue) {
+            document.getElementById('asaasPagValorLiquido').textContent = `R$ ${formatarValor(asaas.netValue)}`;
+            document.getElementById('asaasPagValorLiquidoField').style.display = 'block';
+        } else {
+            document.getElementById('asaasPagValorLiquidoField').style.display = 'none';
+        }
+
         const linkEl = document.getElementById('asaasPagLink');
         linkEl.href = asaas.invoiceUrl || '#';
 
@@ -1627,10 +1642,10 @@ async function logout() {
     }
 }
 
-// V.2610292252
+// V.2610292257
 
 // Debug: Confirmar que funções foram carregadas
-console.log('✅ CLIENTES.JS CARREGADO - V.2610292252');
+console.log('✅ CLIENTES.JS CARREGADO - V.2610292257');
 console.log('✅ Função abrirModalCancelamento existe?', typeof abrirModalCancelamento === 'function');
 console.log('✅ Função fecharModalCancelamento existe?', typeof fecharModalCancelamento === 'function');
 console.log('✅ Função confirmarCancelamento existe?', typeof confirmarCancelamento === 'function');
