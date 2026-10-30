@@ -1,5 +1,5 @@
 // ============================================================
-// ROTAS DE CONTAS A RECEBER - V.2610291905
+// ROTAS DE CONTAS A RECEBER - V.2610292318
 // API de gerenciamento de contas
 // ============================================================
 
@@ -18,11 +18,11 @@ router.post('/:codigo/marcar-paga', autenticar, async (req, res) => {
         const { codigo } = req.params;
         const { dataPagamento, valorPago, formaPagamento, observacoes } = req.body;
 
-        // Validações
-        if (!dataPagamento || !valorPago || !formaPagamento || !observacoes) {
+        // Validações (observações é opcional)
+        if (!dataPagamento || !valorPago || !formaPagamento) {
             return res.status(400).json({
                 sucesso: false,
-                mensagem: 'Campos obrigatórios: dataPagamento, valorPago, formaPagamento, observacoes'
+                mensagem: 'Campos obrigatórios: dataPagamento, valorPago, formaPagamento'
             });
         }
 
@@ -81,8 +81,12 @@ router.post('/:codigo/marcar-paga', autenticar, async (req, res) => {
         novaObservacao += '-----------------------\n';
         novaObservacao += `${dataHoraBrasil} - ${nomeUsuario}\n`;
         novaObservacao += `Data Pgto ${dataPgtoFormatada} Forma: ${formaPagamento} Vlr: R$ ${valorFormatado}\n`;
-        novaObservacao += '\n';
-        novaObservacao += observacoes;
+
+        // Adicionar observações do usuário se fornecidas
+        if (observacoes && observacoes.trim()) {
+            novaObservacao += '\n';
+            novaObservacao += observacoes;
+        }
 
         // 7. Atualizar conta (NUNCA sobrescrever o campo Portador!)
         const updateQuery = `
