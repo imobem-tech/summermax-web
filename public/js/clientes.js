@@ -292,6 +292,7 @@ function mostrarCliente(cliente) {
 
     // Header
     document.getElementById('clienteNome').textContent = cliente.Cliente_Nome || 'Nome não informado';
+    document.getElementById('clienteCodigoHeader').textContent = `- Código: ${cliente.Codigo || '0000'}`;
 
     // Resumo (placeholder - depois conectar com API real)
     document.getElementById('resumoAberto').textContent = 'R$ 0,00';
@@ -1826,9 +1827,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// V.2610300002
+// V.2610300013
 
 // Debug: Confirmar que funções foram carregadas
-console.log('✅ CLIENTES.JS CARREGADO - V.2610300002');
+console.log('✅ CLIENTES.JS CARREGADO - V.2610300013');
 console.log('✅ Função abrirModalObservacao existe?', typeof abrirModalObservacao === 'function');
 console.log('✅ Função salvarObservacao existe?', typeof salvarObservacao === 'function');

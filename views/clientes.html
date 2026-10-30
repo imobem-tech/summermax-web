@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clientes - SUMMERMAX</title>
     <link rel="stylesheet" href="/css/dashboard.css">
-    <link rel="stylesheet" href="/css/clientes.css?v=2610300011">
+    <link rel="stylesheet" href="/css/clientes.css?v=2610300013">
 </head>
 <body>
     <div class="main-container">
@@ -93,7 +93,10 @@
             <section class="cliente-detalhes" id="clienteDetalhes" style="display: none;">
                 <div class="detalhes-header">
                     <button class="btn-voltar" id="btnVoltar">← Voltar</button>
-                    <h2 id="clienteNome">Nome do Cliente</h2>
+                    <h2>
+                        <span id="clienteNome">Nome do Cliente</span>
+                        <span class="cliente-codigo" id="clienteCodigoHeader">- Código: 0000</span>
+                    </h2>
                     <div class="acoes-header">
                         <button class="btn-editar" id="btnEditar">✏️ Editar</button>
                     </div>
@@ -130,7 +133,7 @@
                         <!-- LAYOUT 2 COLUNAS: Dados Esquerda | Observações+Ações Direita -->
                         <div class="dados-layout-horizontal">
                             <!-- COLUNA ESQUERDA: Dados Cadastrais -->
-                            <div class="coluna-dados-cadastrais">
+                            <div class="coluna-dados-grade">
                                 <div class="dados-grupo">
                                     <h3>📝 Dados Cadastrais</h3>
                                     <div class="dados-grid">
@@ -197,7 +200,7 @@
                             <!-- COLUNA DIREITA: Observações + Botões de Ação -->
                             <div class="coluna-observacoes-acoes">
                                 <!-- Observações com Histórico -->
-                                <div class="dados-grupo observacoes-container">
+                                <div class="dados-grupo observacoes-container-inline">
                                     <div class="observacoes-header">
                                         <h3>📌 Observações</h3>
                                         <button class="btn-add-obs" id="btnAdicionarObservacao" title="Adicionar observação">
@@ -769,8 +772,9 @@
         </div>
     </div>
 
-    <script src="/js/clientes.js?v=2610300002"></script>
+    <script src="/js/clientes.js?v=2610300013"></script>
 </body>
 </html>
 
-<!-- V.2610300002 -->
+<!-- V.2610300013 -->
+
