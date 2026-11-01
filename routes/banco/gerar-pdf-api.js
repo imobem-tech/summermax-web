@@ -21,27 +21,30 @@ const { Pool } = pkg;
 function getChromiumPath() {
   // Se tiver variável de ambiente, usar ela
   if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    console.log(`✅ Usando PUPPETEER_EXECUTABLE_PATH: ${process.env.PUPPETEER_EXECUTABLE_PATH}`);
     return process.env.PUPPETEER_EXECUTABLE_PATH;
   }
 
-  // Tentar caminhos comuns no Railway/Linux
+  // Tentar caminhos comuns no Railway/Linux (prioridade: Google Chrome)
   const possiblePaths = [
+    '/usr/bin/google-chrome-stable',  // Google Chrome (instalado via nixpacks.toml)
+    '/usr/bin/google-chrome',
+    '/opt/google/chrome/chrome',
     '/usr/bin/chromium-browser',
     '/usr/bin/chromium',
-    '/usr/bin/google-chrome',
-    '/snap/bin/chromium',
-    '/usr/bin/google-chrome-stable'
+    '/snap/bin/chromium'
   ];
 
   for (const path of possiblePaths) {
     if (existsSync(path)) {
-      console.log(`✅ Chromium encontrado em: ${path}`);
+      console.log(`✅ Chrome/Chromium encontrado em: ${path}`);
       return path;
     }
   }
 
-  console.warn('⚠️ Chromium não encontrado em nenhum caminho padrão');
-  return '/usr/bin/chromium-browser'; // fallback
+  console.error('❌ Chrome/Chromium não encontrado em nenhum caminho padrão!');
+  console.error('Caminhos testados:', possiblePaths);
+  return '/usr/bin/google-chrome-stable'; // fallback
 }
 const router = express.Router();
 
