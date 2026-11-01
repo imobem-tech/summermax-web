@@ -11,8 +11,38 @@ import express from 'express';
 import puppeteer from 'puppeteer-core';
 import { nanoid } from 'nanoid';
 import pkg from 'pg';
+import { existsSync } from 'fs';
 
 const { Pool } = pkg;
+
+// ============================================================
+// DETECTAR CAMINHO DO CHROMIUM
+// ============================================================
+function getChromiumPath() {
+  // Se tiver variável de ambiente, usar ela
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    return process.env.PUPPETEER_EXECUTABLE_PATH;
+  }
+
+  // Tentar caminhos comuns no Railway/Linux
+  const possiblePaths = [
+    '/usr/bin/chromium-browser',
+    '/usr/bin/chromium',
+    '/usr/bin/google-chrome',
+    '/snap/bin/chromium',
+    '/usr/bin/google-chrome-stable'
+  ];
+
+  for (const path of possiblePaths) {
+    if (existsSync(path)) {
+      console.log(`✅ Chromium encontrado em: ${path}`);
+      return path;
+    }
+  }
+
+  console.warn('⚠️ Chromium não encontrado em nenhum caminho padrão');
+  return '/usr/bin/chromium-browser'; // fallback
+}
 const router = express.Router();
 
 const pool = new Pool({
@@ -50,7 +80,7 @@ router.post('/gerar-pdf', async (req, res) => {
     // Gerar PDF com Puppeteer
     const browser = await puppeteer.launch({
       headless: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+      executablePath: getChromiumPath(),
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
 
@@ -371,7 +401,7 @@ router.get('/gerar-pdf-url', async (req, res) => {
     // Abrir página com Puppeteer
     const browser = await puppeteer.launch({
       headless: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+      executablePath: getChromiumPath(),
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
