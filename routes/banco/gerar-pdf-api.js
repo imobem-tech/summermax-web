@@ -418,6 +418,20 @@ router.get('/gerar-pdf-url', async (req, res) => {
     // Viewport maior para capturar tudo
     await page.setViewport({ width: 1200, height: 800 });
 
+    // 🔒 INJETAR COOKIE DE AUTENTICAÇÃO DO USUÁRIO
+    const token = req.cookies?.token;
+    if (token) {
+      await page.setCookie({
+        name: 'token',
+        value: token,
+        domain: new URL(baseURL).hostname,
+        path: '/',
+        httpOnly: true,
+        secure: baseURL.startsWith('https')
+      });
+      console.log('🔑 Token de autenticação injetado no Puppeteer');
+    }
+
     // Navegar para a página
     await page.goto(pageURL, {
       waitUntil: 'networkidle0',

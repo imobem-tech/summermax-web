@@ -1,9 +1,11 @@
 // ============================================================
-// routes/banco/index.js — V.2611011100
+// routes/banco/index.js — V.2611011440
 // ROTAS DO EXTRATO BANCÁRIO (SUMMERMAX-WEB)
+// 🔒 TODAS AS ROTAS PROTEGIDAS COM AUTENTICAÇÃO
 // ============================================================
 
 import express from 'express';
+import { autenticar } from '../../middlewares/auth.js';
 import extratoRouter from './extrato-api.js';
 import editarLancamentoRouter from './editar-lancamento-api.js';
 import enriquecerRouter from './enriquecer-api.js';
@@ -16,6 +18,11 @@ import categoriasRouter from './categorias-crud.js';
 import gerarPdfRouter from './gerar-pdf-api.js';
 
 const router = express.Router();
+
+// ============================================================
+// 🔒 APLICAR AUTENTICAÇÃO EM TODAS AS ROTAS
+// ============================================================
+router.use(autenticar);
 
 // Rotas de extrato bancário
 router.use('/extrato', extratoRouter);

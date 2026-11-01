@@ -118,9 +118,8 @@ app.get('/orcamentos', (req, res) => {
 });
 
 // Extrato Bancário
-// Extrato Bancário (HTML público, mas APIs protegidas)
-// Nota: página sozinha não tem dados - APIs já validam autenticação
-app.get('/extrato-bancario.html', (req, res) => {
+// Extrato Bancário (PROTEGIDO)
+app.get('/extrato-bancario.html', autenticarHTML, (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'extrato-bancario.html'));
 });
 
