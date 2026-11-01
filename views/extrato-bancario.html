@@ -6,7 +6,7 @@
     <title>Extrato Bancário</title>
     <!--
     ============================================================
-    EXTRATO BANCÁRIO - V.2610071754
+    EXTRATO BANCÁRIO - V.2611011416 (Anexos destacados no PDF)
 
     📄 PDF ESPELHO DA TELA - V.2609211536
        - Função gerarPDF() reescrita para usar nova rota GET
@@ -423,13 +423,15 @@
         }
 
         .anexo-link {
-            color: #667eea;
+            color: #059669;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 20px;
         }
 
         .anexo-link:hover {
             text-decoration: underline;
+            color: #047857;
         }
 
         .filter-mode {
@@ -892,7 +894,7 @@
                         <th>Empresa</th>
                         <th>Categoria</th>
                         <th>Descrição</th>
-                        <th>📎</th>
+                        <th style="color: #059669; font-weight: 700;">📎 Anexos</th>
                         <th>Origem</th>
                         <th>Observações</th>
                         <th>Valor</th>
@@ -1384,10 +1386,10 @@
                     `<span class="categoria" style="background-color: ${lanc.categoria.cor}20; color: ${lanc.categoria.cor}">${lanc.categoria.icone} ${lanc.categoria.nome}</span>` :
                     '<span class="categoria" style="background: #fee; color: #c00;">⚠️ Não classificado</span>';
 
-                // Anexo
+                // Anexo: só o número, SEM clipe
                 const anexoHTML = lanc.tem_anexo && lanc.url_token ?
-                    `<a href="${lanc.url_token}" target="_blank" class="anexo-link">📎${lanc.anexos.length}</a>` :
-                    '-';
+                    `<a href="${lanc.url_token}" target="_blank" class="anexo-link">${lanc.anexos.length}</a>` :
+                    '<span style="color: #9ca3af; font-size: 16px;">-</span>';
 
                 // Origem com CPF/CNPJ
                 const origemHTML = lanc.origem.nome ?
@@ -3248,4 +3250,4 @@ conforme critérios selecionados
 </body>
 </html>
 
-<!-- V.2609181923 - 📋 Modal edição: layout 2 colunas + dados do registro -->
+<!-- V.2611011416 - 📎 Anexos destacados: número 2x maior, cabeçalho verde, sem clipe -->
