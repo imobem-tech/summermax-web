@@ -22,6 +22,9 @@ import contasRoutes from './routes/contas.js';
 import usuariosRoutes from './routes/usuarios.js';
 import bancoRoutes from './routes/banco/index.js';
 
+// Importar middlewares
+import { autenticarHTML } from './middlewares/auth.js';
+
 // Configurar variáveis de ambiente
 dotenv.config();
 
@@ -80,27 +83,27 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'login.html'));
 });
 
-// Dashboard
-app.get('/dashboard.html', (req, res) => {
+// Dashboard (PROTEGIDO)
+app.get('/dashboard.html', autenticarHTML, (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'dashboard.html'));
 });
 
-// Clientes
-app.get('/clientes.html', (req, res) => {
+// Clientes (PROTEGIDO)
+app.get('/clientes.html', autenticarHTML, (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'clientes.html'));
 });
 
-// Usuários
-app.get('/usuarios.html', (req, res) => {
+// Usuários (PROTEGIDO)
+app.get('/usuarios.html', autenticarHTML, (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'usuarios.html'));
 });
 
-// Orçamentos
-app.get('/orcamentos.html', (req, res) => {
+// Orçamentos (PROTEGIDO)
+app.get('/orcamentos.html', autenticarHTML, (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'orc_orcamentos.html'));
 });
 
-app.get('/orcamentos-novo.html', (req, res) => {
+app.get('/orcamentos-novo.html', autenticarHTML, (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'orc_novo.html'));
 });
 
@@ -115,7 +118,8 @@ app.get('/orcamentos', (req, res) => {
 });
 
 // Extrato Bancário
-app.get('/extrato-bancario.html', (req, res) => {
+// Extrato Bancário (PROTEGIDO - requer autenticação)
+app.get('/extrato-bancario.html', autenticarHTML, (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'extrato-bancario.html'));
 });
 

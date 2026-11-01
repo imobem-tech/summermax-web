@@ -1,9 +1,33 @@
 // ============================================================
 // MIDDLEWARE DE AUTENTICAÇÃO
-// V.2606181509
+// V.2611011420 - Adicionado autenticarHTML para páginas
 // ============================================================
 
 import { verificarToken } from '../config/jwt.js';
+
+// ============================================================
+// MIDDLEWARE PARA PÁGINAS HTML (redireciona se não autenticado)
+// ============================================================
+export const autenticarHTML = (req, res, next) => {
+  try {
+    // Pegar token do cookie ou header
+    const token = req.cookies?.token || req.headers.authorization?.replace('Bearer ', '');
+
+    if (!token) {
+      // Redireciona para login se não tiver token
+      return res.redirect('/login.html?erro=nao_autenticado');
+    }
+
+    // Verificar token
+    const decoded = verificarToken(token);
+    req.usuario = decoded;
+
+    next();
+  } catch (err) {
+    // Redireciona para login se token inválido
+    return res.redirect('/login.html?erro=sessao_expirada');
+  }
+};
 
 // Verificar se usuário está autenticado
 export const autenticar = (req, res, next) => {
@@ -76,9 +100,10 @@ export const verificarEmpresa = (req, res, next) => {
 
 export default {
   autenticar,
+  autenticarHTML,
   autorizar,
   verificarGrupo,
   verificarEmpresa
 };
 
-// V.2606181509
+// V.2611011420
