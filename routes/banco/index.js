@@ -13,11 +13,13 @@ import saldoInicialRouter from './saldo-inicial-api.js';
 import divergenciasDataRouter from './divergencias-data-api.js';
 import corrigirMesRouter from './corrigir-mes-api.js';
 import categoriasRouter from './categorias-crud.js';
+import gerarPdfRouter from './gerar-pdf-api.js';
 
 const router = express.Router();
 
 // Rotas de extrato bancário
 router.use('/extrato', extratoRouter);
+router.use('/extrato', gerarPdfRouter);
 
 // Rotas de edição
 router.use('/', editarLancamentoRouter);
