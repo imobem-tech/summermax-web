@@ -1,6 +1,11 @@
 // ============================================================
-// wpp/routes/banco/gerar-pdf-api.js — V.2609211549
+// wpp/routes/banco/gerar-pdf-api.js — V.2611011514
 // API PARA GERAR PDF DO EXTRATO BANCÁRIO
+//
+// ✅ PDF CONTÍNUO - SEM QUEBRAS DE PÁGINA (V.2611011514)
+//    - Adicionado CSS page-break-* avoid em todos elementos
+//    - Table com page-break-inside: auto
+//    - TR com page-break-inside: avoid
 //
 // ROTAS:
 // - POST /gerar-pdf     → Método antigo (gera HTML customizado)
@@ -203,7 +208,21 @@ function gerarHTMLPDF(dados, empresa, descricao, mes, data_inicio, data_fim) {
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; font-size: 11px; color: #333; }
+
+        /* PDF CONTÍNUO - SEM QUEBRAS DE PÁGINA */
         @page { size: A4 portrait; margin: 10mm; }
+        * {
+            page-break-before: avoid !important;
+            page-break-after: avoid !important;
+            page-break-inside: avoid !important;
+        }
+        table {
+            page-break-inside: auto !important;
+        }
+        tr {
+            page-break-inside: avoid !important;
+            page-break-after: auto !important;
+        }
 
         .header {
             border-bottom: 2px solid #667eea;
