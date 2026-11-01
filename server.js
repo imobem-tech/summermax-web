@@ -1,6 +1,7 @@
 // ============================================================
 // SERVIDOR EXPRESS - SISTEMA WEB SUMMERMAX
-// V.2610301230
+// V.2611011032
+// + Extrato Bancário migrado do calendario-boat
 // + Sistema de orçamentos web estilo chat (shared/orcamentos-core.js)
 // + CORRIGIDO: Imports e rotas funcionando
 // ============================================================
@@ -20,6 +21,7 @@ import embarcacoesRoutes from './routes/embarcacoes.js';
 import clientesRoutes from './routes/clientes.js';
 import contasRoutes from './routes/contas.js';
 import usuariosRoutes from './routes/usuarios.js';
+import bancoRoutes from './routes/banco/index.js';
 
 // Configurar variáveis de ambiente
 dotenv.config();
@@ -71,6 +73,9 @@ app.use('/api/contas', contasRoutes);
 // API de usuários
 app.use('/api/usuarios', usuariosRoutes);
 
+// API de banco/extrato
+app.use('/api/banco', bancoRoutes);
+
 // Rota raiz (login)
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'login.html'));
@@ -110,6 +115,11 @@ app.get('/orcamentos', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'orcamentos.html'));
 });
 
+// Extrato Bancário
+app.get('/extrato-bancario.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'extrato-bancario.html'));
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({
@@ -145,4 +155,4 @@ app.listen(PORT, () => {
   console.log('');
 });
 
-// V.2606181513
+// V.2611011032
