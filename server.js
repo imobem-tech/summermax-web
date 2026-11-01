@@ -20,6 +20,7 @@ import embarcacoesRoutes from './routes/embarcacoes.js';
 import clientesRoutes from './routes/clientes.js';
 import contasRoutes from './routes/contas.js';
 import usuariosRoutes from './routes/usuarios.js';
+import bancoRoutes from './routes/banco/index.js';
 
 // Configurar variáveis de ambiente
 dotenv.config();
@@ -71,6 +72,9 @@ app.use('/api/contas', contasRoutes);
 // API de usuários
 app.use('/api/usuarios', usuariosRoutes);
 
+// API de banco/extrato
+app.use('/api/banco', bancoRoutes);
+
 // Rota raiz (login)
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'login.html'));
@@ -108,6 +112,11 @@ app.get('/orc_rateio_modal.html', (req, res) => {
 // Orçamentos Web (novo - estilo chat)
 app.get('/orcamentos', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'orcamentos.html'));
+});
+
+// Extrato Bancário
+app.get('/extrato-bancario.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'extrato-bancario.html'));
 });
 
 // Health check
