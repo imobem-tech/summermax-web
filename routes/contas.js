@@ -1,6 +1,7 @@
 // ============================================================
-// ROTAS DE CONTAS A RECEBER - V.2610292318
+// ROTAS DE CONTAS A RECEBER - V.2611011006
 // API de gerenciamento de contas
+// Alteração: Baixa manual CANCELA cobrança no Asaas (não mais receiveInCash)
 // ============================================================
 
 import express from 'express';
@@ -145,31 +146,24 @@ router.post('/:codigo/marcar-paga', autenticar, async (req, res) => {
 
                         // VERIFICAR SE FOI DELETADA/CANCELADA
                         if (cobranca.deleted === true) {
-                            console.log('⚠️ COBRANÇA REMOVIDA - NÃO É POSSÍVEL FAZER BAIXA NO ASAAS');
-                            asaasMotivoNaoBaixado = 'Cobrança foi removida/cancelada no Asaas - não é possível registrar baixa manual';
+                            console.log('⚠️ COBRANÇA JÁ REMOVIDA - Apenas baixa local realizada');
+                            asaasMotivoNaoBaixado = 'Cobrança já estava cancelada no Asaas';
                         } else {
-                            // Cobrança ativa - tentar baixa
+                            // Cobrança ativa - CANCELAR no Asaas
                             const apiUrl = isProduction
-                                ? `https://www.asaas.com/api/v3/payments/${paymentId}/receiveInCash`
-                                : `https://sandbox.asaas.com/api/v3/payments/${paymentId}/receiveInCash`;
+                                ? `https://www.asaas.com/api/v3/payments/${paymentId}`
+                                : `https://sandbox.asaas.com/api/v3/payments/${paymentId}`;
 
-                            console.log('🔍 TENTANDO BAIXA NO ASAAS:');
+                            console.log('🚫 CANCELANDO COBRANÇA NO ASAAS:');
                             console.log('   URL:', apiUrl);
                             console.log('   Payment ID:', paymentId);
-                            console.log('   Data:', dataPagamento);
-                            console.log('   Valor:', valorPago);
+                            console.log('   Motivo: Baixa manual via web');
 
                             const asaasResponse = await fetch(apiUrl, {
-                                method: 'POST',
+                                method: 'DELETE',
                                 headers: {
-                                    'access_token': apiKey,
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    paymentDate: dataPagamento,
-                                    value: valorPago,
-                                    notifyCustomer: false
-                                })
+                                    'access_token': apiKey
+                                }
                             });
 
                             console.log('📡 RESPOSTA ASAAS:');
@@ -178,16 +172,16 @@ router.post('/:codigo/marcar-paga', autenticar, async (req, res) => {
 
                             if (asaasResponse.ok) {
                                 asaasResult = await asaasResponse.json();
-                                console.log('✅ BAIXA REALIZADA:', asaasResult);
+                                console.log('✅ COBRANÇA CANCELADA:', asaasResult);
                             } else {
                                 const errorText = await asaasResponse.text();
-                                console.log('❌ ERRO NA BAIXA:');
+                                console.log('❌ ERRO AO CANCELAR:');
                                 console.log('   Status:', asaasResponse.status);
                                 console.log('   Resposta:', errorText);
 
                                 try {
                                     const errorJson = JSON.parse(errorText);
-                                    asaasMotivoNaoBaixado = errorJson.errors?.[0]?.description || 'Erro desconhecido ao fazer baixa';
+                                    asaasMotivoNaoBaixado = errorJson.errors?.[0]?.description || 'Erro desconhecido ao cancelar';
                                 } catch {
                                     asaasMotivoNaoBaixado = 'Erro ao comunicar com Asaas';
                                 }
@@ -220,8 +214,8 @@ router.post('/:codigo/marcar-paga', autenticar, async (req, res) => {
             },
             asaas: asaasResult ? {
                 alterado: true,
-                acao: 'Baixa manual registrada',
-                status: asaasResult.status,
+                acao: 'Cobrança cancelada no Asaas',
+                status: asaasResult.deleted ? 'CANCELADA' : asaasResult.status,
                 paymentId: paymentId
             } : {
                 alterado: false,
@@ -584,4 +578,4 @@ router.post('/:codigo/cancelar', autenticar, async (req, res) => {
 
 export default router;
 
-// V.2610292150
+// V.2611011006
