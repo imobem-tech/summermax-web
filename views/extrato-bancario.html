@@ -6,7 +6,7 @@
     <title>Extrato Bancário</title>
     <!--
     ============================================================
-    EXTRATO BANCÁRIO - V.2611011455 (Cards compactos: 2 linhas x 3 colunas, 1 linha por card)
+    EXTRATO BANCÁRIO - V.2611011501 (Fix JS + margens reduzidas 50-70%)
 
     📄 PDF ESPELHO DA TELA - V.2609211536
        - Função gerarPDF() reescrita para usar nova rota GET
@@ -214,7 +214,7 @@
         }
 
         .filters {
-            padding: 25px 30px;
+            padding: 12px 30px;  /* 50% de 25px = 12px */
             background: #fafafa;
             border-bottom: 1px solid #e0e0e0;
             display: grid;
@@ -304,7 +304,7 @@
         }
 
         .summary {
-            padding: 20px 30px;
+            padding: 10px 30px 6px 30px;  /* top: 50% de 20, bottom: 30% de 20 */
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
@@ -1478,12 +1478,10 @@
                 const dataFormatada = dataObj.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 
                 document.getElementById('saldoInicialConsulta').textContent = formatarValor(saldoAnterior);
-                document.getElementById('dataSaldoInicial').textContent = `Saldo final de ${dataFormatada}`;
 
                 console.log(`📊 Card atualizado: Saldo anterior ${dataFormatada} = R$ ${saldoAnterior.toFixed(2)}`);
             } else if (empresa && empresa !== 'TODAS') {
                 document.getElementById('saldoInicialConsulta').textContent = '-';
-                document.getElementById('dataSaldoInicial').textContent = 'Nenhum saldo cadastrado';
             }
         }
 
@@ -1541,22 +1539,17 @@
 
                         // EXIBIR SALDO INICIAL DA CONSULTA (calculado)
                         document.getElementById('saldoInicialConsulta').textContent = formatarValor(saldoInicialCalculado);
-                        document.getElementById('dataSaldoInicial').textContent =
-                            `Saldo final de ${dataRef} (calculado)`;
                     } else {
                         // Sem saldo cadastrado
                         document.getElementById('saldoInicialConsulta').textContent = 'R$ 0,00';
-                        document.getElementById('dataSaldoInicial').textContent = 'Nenhum saldo cadastrado';
                     }
                 } catch (err) {
                     console.log('ℹ️ Erro ao calcular saldo:', err);
                     document.getElementById('saldoInicialConsulta').textContent = 'R$ 0,00';
-                    document.getElementById('dataSaldoInicial').textContent = 'Erro ao calcular';
                 }
             } else {
                 // Empresa "TODAS" ou sem lançamentos
                 document.getElementById('saldoInicialConsulta').textContent = '-';
-                document.getElementById('dataSaldoInicial').textContent = empresa === 'TODAS' ? 'Selecione uma empresa específica' : 'Sem lançamentos';
             }
 
             document.getElementById('saldoPeriodo').textContent = formatarValor(saldoFinal);
@@ -3248,4 +3241,4 @@ conforme critérios selecionados
 </body>
 </html>
 
-<!-- V.2611011455 - 📊 Cards compactos: 2x3 grid, 1 linha/card, padding reduzido, ~60% menos altura -->
+<!-- V.2611011501 - 🐛 Fix dataSaldoInicial + margens: filtros 50%, cards 70% menores -->
