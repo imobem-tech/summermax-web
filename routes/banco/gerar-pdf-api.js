@@ -151,10 +151,10 @@ function gerarHTMLPDF(dados, empresa, descricao, mes, data_inicio, data_fim) {
       `<span style="font-weight: 500;">${lanc.origem.nome}</span><br><span style="font-size: 8px; color: #6b7280;">${formatarCpfCnpj(lanc.origem.cpf_cnpj)}</span>` :
       '<span>-</span>';
 
-    // Anexo: apenas número, negrito, maior
-    let anexoHTML = '<span style="color: #d1d5db; font-size: 10px;">-</span>';
+    // Anexo: apenas número, negrito, BEM MAIOR (2x)
+    let anexoHTML = '<span style="color: #9ca3af; font-size: 16px; font-weight: 600;">-</span>';
     if (lanc.tem_anexo && lanc.url_token) {
-      anexoHTML = `<a href="${lanc.url_token}" target="_blank" style="color: #10b981; text-decoration: none; font-weight: 700; font-size: 13px;">${lanc.anexos.length}</a>`;
+      anexoHTML = `<a href="${lanc.url_token}" target="_blank" style="color: #059669; text-decoration: none; font-weight: 700; font-size: 24px;">${lanc.anexos.length}</a>`;
     }
 
     lancamentosHTML += `
@@ -347,7 +347,7 @@ function gerarHTMLPDF(dados, empresa, descricao, mes, data_inicio, data_fim) {
                 <th style="width: 50px; font-size: 8px;">Empresa</th>
                 <th style="width: 100px;">Categoria</th>
                 <th>Descrição</th>
-                <th style="width: 35px; text-align:center;">Anexos</th>
+                <th style="width: 50px; text-align:center; color: #059669; font-weight: 700;">📎 Anexos</th>
                 <th style="width: 110px;">Origem</th>
                 <th style="width: 90px;">Observações</th>
                 <th style="width: 70px; text-align:right;">Valor</th>
