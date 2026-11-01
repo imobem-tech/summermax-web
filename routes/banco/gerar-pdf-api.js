@@ -50,6 +50,7 @@ router.post('/gerar-pdf', async (req, res) => {
     // Gerar PDF com Puppeteer
     const browser = await puppeteer.launch({
       headless: true,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
 
@@ -370,6 +371,7 @@ router.get('/gerar-pdf-url', async (req, res) => {
     // Abrir página com Puppeteer
     const browser = await puppeteer.launch({
       headless: true,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
