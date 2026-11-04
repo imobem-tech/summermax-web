@@ -1,5 +1,5 @@
 // ============================================================
-// ROTAS DE CONTAS A RECEBER - V.2611011006
+// ROTAS DE CONTAS A RECEBER - V.2611041017
 // API de gerenciamento de contas
 // Alteração: Baixa manual CANCELA cobrança no Asaas (não mais receiveInCash)
 // ============================================================
@@ -472,11 +472,12 @@ router.post('/:codigo/cancelar', autenticar, async (req, res) => {
         }
 
         // Atualizar banco (registrar cancelamento)
+        // IMPORTANTE: Mantém Data_Vencimento original - registra Data_Pagamento da baixa
         const dataCancelamento = new Date().toISOString().split('T')[0]; // Data atual YYYY-MM-DD
 
         await pool.query(`
             UPDATE public."Contas_Receber"
-            SET "Data_Vencimento" = $1,
+            SET "Data_Pagamento" = $1,
                 "Total" = NULL,
                 "Observacões_Pagamento" = $2
             WHERE "Codigo" = $3
@@ -578,4 +579,4 @@ router.post('/:codigo/cancelar', autenticar, async (req, res) => {
 
 export default router;
 
-// V.2611011006
+// V.2611041017
