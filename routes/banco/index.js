@@ -16,6 +16,7 @@ import divergenciasDataRouter from './divergencias-data-api.js';
 import corrigirMesRouter from './corrigir-mes-api.js';
 import categoriasRouter from './categorias-crud.js';
 import gerarPdfRouter from './gerar-pdf-api.js';
+import gestaoFinanceiraRouter from './gestao-financeira-api.js';
 
 const router = express.Router();
 
@@ -39,5 +40,6 @@ router.use('/divergencias-data', divergenciasDataRouter);
 router.use('/corrigir-mes', corrigirMesRouter);
 router.use('/saldo-inicial', saldoInicialRouter);
 router.use('/categorias', categoriasRouter);
+router.use('/gestao', gestaoFinanceiraRouter);
 
 export default router;

@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Extrato Bancário</title>
+    <title>Extrato Bancário - SUMMERMAX</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
     <!--
     ============================================================
-    EXTRATO BANCÁRIO - V.2611011514 (Margens MÍNIMAS + PDF contínuo)
+    EXTRATO BANCÁRIO - V.2611122300 (COM MENU LATERAL)
 
     📄 PDF ESPELHO DA TELA - V.2609211536
        - Função gerarPDF() reescrita para usar nova rota GET
@@ -176,41 +177,23 @@
     ============================================================
     -->
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .header {
+        /* Estilos específicos do Extrato Bancário */
+        .extrato-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 20px 30px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 8px 8px 0 0;
         }
 
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
+        .extrato-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
         }
 
-        .header p {
+        .extrato-header p {
             opacity: 0.9;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .filters {
@@ -751,9 +734,67 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- HEADER -->
-        <div class="header">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <h1 class="logo">SUMMERMAX</h1>
+        </div>
+        <div class="header-right">
+            <span id="nomeUsuario" class="user-name">Carregando...</span>
+            <button id="btnLogout" class="btn-logout">Sair</button>
+        </div>
+    </header>
+
+    <!-- Container Principal -->
+    <div class="main-container">
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <nav class="menu">
+                <a href="/dashboard.html" class="menu-item">
+                    📊 Dashboard
+                </a>
+                <div class="menu-section">Cadastros</div>
+                <a href="/clientes.html" class="menu-item">
+                    👥 Clientes
+                </a>
+                <a href="/embarcacoes.html" class="menu-item">
+                    🚤 Embarcações
+                </a>
+                <a href="/fornecedores.html" class="menu-item">
+                    🚚 Fornecedores
+                </a>
+
+                <div class="menu-section">Operacional</div>
+                <a href="/orcamentos.html" class="menu-item">
+                    📝 Orçamentos
+                </a>
+                <a href="/orcamentos" class="menu-item">
+                    💬 Orçamentos (Chat)
+                </a>
+
+                <div class="menu-section">Financeiro</div>
+                <a href="/contas-receber.html" class="menu-item">
+                    💰 Contas a Receber
+                </a>
+                <a href="/extrato-bancario.html" class="menu-item active">
+                    📊 Extrato Bancário
+                </a>
+                <a href="/gestao-financeira.html" class="menu-item">
+                    💵 Gestão Financeira
+                </a>
+
+                <div class="menu-section">Configurações</div>
+                <a href="/usuarios.html" class="menu-item">
+                    👤 Usuários
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="content" style="background: #f5f5f5; padding: 20px;">
+            <div style="max-width: 1400px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+                <!-- HEADER DO EXTRATO -->
+                <div class="extrato-header">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h1 style="margin-bottom: 10px;">📊 Extrato Bancário</h1>
@@ -3238,7 +3279,33 @@ conforme critérios selecionados
         </div>
     </div>
 
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Autenticação e Logout
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            const nomeUsuario = localStorage.getItem('nomeUsuario');
+            if (nomeUsuario) {
+                document.getElementById('nomeUsuario').textContent = nomeUsuario;
+            }
+        });
+
+        document.getElementById('btnLogout').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('nomeUsuario');
+            window.location.href = '/login.html';
+        });
+    </script>
+
 </body>
 </html>
 
-<!-- V.2611011501 - 🐛 Fix dataSaldoInicial + margens: filtros 50%, cards 70% menores -->
+<!-- V.2611122300 - COM MENU LATERAL -->

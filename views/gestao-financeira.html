@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão Financeira - SUMMERMAX</title>
+    <!--
+    ============================================================
+    GESTÃO FINANCEIRA - V.2611122202
+    Sistema de análise financeira com drill-down por categoria
+    ============================================================
+    -->
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <style>
+        /* Estilos específicos da Gestão Financeira */
+        .filtros-container {
+            background: var(--cor-branco);
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: var(--sombra);
+            margin-bottom: 24px;
+        }
+
+        .filtros-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--cor-texto);
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .btn-atualizar {
+            background: var(--cor-primaria);
+            color: var(--cor-branco);
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .btn-atualizar:hover {
+            background: var(--cor-secundaria);
+        }
+
+        .btn-atualizar:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .categoria-card {
+            background: var(--cor-branco);
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: var(--sombra);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .categoria-card:hover {
+            border-color: var(--cor-primaria);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .categoria-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .categoria-nome {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--cor-texto);
+        }
+
+        .categoria-qtd {
+            font-size: 12px;
+            color: var(--cor-texto-claro);
+        }
+
+        .categoria-valores {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .categoria-total {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .categoria-total.receita {
+            color: var(--cor-sucesso);
+        }
+
+        .categoria-total.despesa {
+            color: var(--cor-erro);
+        }
+
+        .categoria-perc {
+            font-size: 12px;
+            color: var(--cor-texto-claro);
+        }
+
+        .categorias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--cor-texto);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--cor-branco);
+            border-radius: 8px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--cor-texto);
+        }
+
+        .modal-subtitle {
+            font-size: 14px;
+            color: var(--cor-texto-claro);
+            margin-top: 4px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--cor-texto-claro);
+            padding: 8px;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--cor-texto);
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .lancamento-item {
+            background: #f9f9f9;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border-left: 4px solid #ddd;
+        }
+
+        .lancamento-item.receita {
+            border-left-color: var(--cor-sucesso);
+        }
+
+        .lancamento-item.despesa {
+            border-left-color: var(--cor-erro);
+        }
+
+        .lancamento-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .lancamento-descricao {
+            font-weight: 500;
+            color: var(--cor-texto);
+            flex: 1;
+        }
+
+        .lancamento-valor {
+            font-size: 18px;
+            font-weight: 700;
+            white-space: nowrap;
+            margin-left: 16px;
+        }
+
+        .lancamento-valor.receita {
+            color: var(--cor-sucesso);
+        }
+
+        .lancamento-valor.despesa {
+            color: var(--cor-erro);
+        }
+
+        .lancamento-meta {
+            font-size: 13px;
+            color: var(--cor-texto-claro);
+            margin-top: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--cor-texto-claro);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .card.verde { border-left: 4px solid var(--cor-sucesso); }
+        .card.vermelho { border-left: 4px solid var(--cor-erro); }
+        .card.azul { border-left: 4px solid var(--cor-primaria); }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <h1 class="logo">SUMMERMAX</h1>
+        </div>
+        <div class="header-right">
+            <span id="nomeUsuario" class="user-name">Carregando...</span>
+            <button id="btnLogout" class="btn-logout">Sair</button>
+        </div>
+    </header>
+
+    <!-- Container Principal -->
+    <div class="main-container">
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <nav class="menu">
+                <a href="/dashboard.html" class="menu-item">
+                    📊 Dashboard
+                </a>
+                <div class="menu-section">Cadastros</div>
+                <a href="/clientes.html" class="menu-item">
+                    👥 Clientes
+                </a>
+                <a href="/embarcacoes.html" class="menu-item">
+                    🚤 Embarcações
+                </a>
+                <a href="/fornecedores.html" class="menu-item">
+                    🚚 Fornecedores
+                </a>
+
+                <div class="menu-section">Operacional</div>
+                <a href="/orcamentos.html" class="menu-item">
+                    📝 Orçamentos
+                </a>
+                <a href="/orcamentos" class="menu-item">
+                    💬 Orçamentos (Chat)
+                </a>
+
+                <div class="menu-section">Financeiro</div>
+                <a href="/contas-receber.html" class="menu-item">
+                    💰 Contas a Receber
+                </a>
+                <a href="/extrato-bancario.html" class="menu-item">
+                    📊 Extrato Bancário
+                </a>
+                <a href="/gestao-financeira.html" class="menu-item active">
+                    💵 Gestão Financeira
+                </a>
+
+                <div class="menu-section">Configurações</div>
+                <a href="/usuarios.html" class="menu-item">
+                    👤 Usuários
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="content">
+            <div class="page-header">
+                <h2>💵 Gestão Financeira</h2>
+                <p class="subtitle">Análise completa de receitas e despesas</p>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filtros-container">
+                <div class="filtros-grid">
+                    <div class="form-group">
+                        <label for="mesCompleto">📅 Mês Completo</label>
+                        <input type="month" id="mesCompleto" style="padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataInicio">Data Início</label>
+                        <input type="date" id="dataInicio">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataFim">Data Fim</label>
+                        <input type="date" id="dataFim">
+                    </div>
+                    <div class="form-group">
+                        <label for="empresa">Empresa</label>
+                        <select id="empresa">
+                            <option value="SUMMER">SUMMER (Náutica)</option>
+                            <option value="ALLMAX">ALLMAX</option>
+                            <option value="TODOS">Todas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button id="btnAtualizar" class="btn-atualizar">Atualizar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards de Resumo -->
+            <div class="cards-grid" id="cardsResumo">
+                <div class="card verde">
+                    <div class="card-icon">💵</div>
+                    <div class="card-content">
+                        <h3>Total de Entradas</h3>
+                        <p class="card-number" id="totalEntradas">-</p>
+                        <span class="card-label">receitas</span>
+                    </div>
+                </div>
+
+                <div class="card vermelho">
+                    <div class="card-icon">💸</div>
+                    <div class="card-content">
+                        <h3>Total de Saídas</h3>
+                        <p class="card-number" id="totalSaidas">-</p>
+                        <span class="card-label">despesas</span>
+                    </div>
+                </div>
+
+                <div class="card azul">
+                    <div class="card-icon">💰</div>
+                    <div class="card-content">
+                        <h3>Saldo Líquido</h3>
+                        <p class="card-number" id="saldoLiquido">-</p>
+                        <span class="card-label">resultado</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receitas -->
+            <div id="secaoReceitas" style="display: none;">
+                <div class="section-title">📈 Receitas</div>
+                <div class="categorias-grid" id="gridReceitas"></div>
+            </div>
+
+            <!-- Despesas -->
+            <div id="secaoDespesas" style="display: none;">
+                <div class="section-title">📉 Despesas</div>
+                <div class="categorias-grid" id="gridDespesas"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Lançamentos -->
+    <div id="modalLancamentos" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="modalTitulo">Categoria</div>
+                    <div class="modal-subtitle" id="modalSubtitulo"></div>
+                </div>
+                <button class="modal-close" onclick="fecharModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Lançamentos serão inseridos aqui -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // VARIÁVEIS GLOBAIS
+        // ============================================================
+        let dadosAtuais = {
+            resumo: null,
+            receitas: [],
+            despesas: []
+        };
+
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            verificarAutenticacao();
+            configurarEventos();
+            inicializarDatas();
+            carregarDados();
+        });
+
+        function verificarAutenticacao() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            const nomeUsuario = localStorage.getItem('nomeUsuario');
+            if (nomeUsuario) {
+                document.getElementById('nomeUsuario').textContent = nomeUsuario;
+            }
+        }
+
+        function configurarEventos() {
+            document.getElementById('btnLogout').addEventListener('click', logout);
+            document.getElementById('btnAtualizar').addEventListener('click', carregarDados);
+
+            // Seletor de mês completo
+            document.getElementById('mesCompleto').addEventListener('change', (e) => {
+                const mesAno = e.target.value; // formato: YYYY-MM
+                if (mesAno) {
+                    const [ano, mes] = mesAno.split('-');
+                    const primeiroDia = `${ano}-${mes}-01`;
+                    const ultimoDia = new Date(ano, mes, 0).getDate(); // último dia do mês
+                    const ultimaData = `${ano}-${mes}-${String(ultimoDia).padStart(2, '0')}`;
+
+                    document.getElementById('dataInicio').value = primeiroDia;
+                    document.getElementById('dataFim').value = ultimaData;
+
+                    // Carregar automaticamente
+                    carregarDados();
+                }
+            });
+
+            // Fechar modal ao clicar fora
+            document.getElementById('modalLancamentos').addEventListener('click', (e) => {
+                if (e.target.id === 'modalLancamentos') {
+                    fecharModal();
+                }
+            });
+
+            // Fechar modal com ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    fecharModal();
+                }
+            });
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('nomeUsuario');
+            window.location.href = '/login.html';
+        }
+
+        function inicializarDatas() {
+            const hoje = new Date();
+
+            // Mês ANTERIOR como padrão
+            const mesAnterior = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
+            const primeiroDia = new Date(mesAnterior.getFullYear(), mesAnterior.getMonth(), 1);
+            const ultimoDia = new Date(mesAnterior.getFullYear(), mesAnterior.getMonth() + 1, 0);
+
+            // Preencher campos de data
+            document.getElementById('dataInicio').value = primeiroDia.toISOString().split('T')[0];
+            document.getElementById('dataFim').value = ultimoDia.toISOString().split('T')[0];
+
+            // Preencher seletor de mês (formato YYYY-MM)
+            const mesAnoFormatado = `${mesAnterior.getFullYear()}-${String(mesAnterior.getMonth() + 1).padStart(2, '0')}`;
+            document.getElementById('mesCompleto').value = mesAnoFormatado;
+
+            // Empresa padrão: SUMMER (já está no HTML)
+        }
+
+
+        // ============================================================
+        // CARREGAR DADOS
+        // ============================================================
+        async function carregarDados() {
+            const dataInicio = document.getElementById('dataInicio').value;
+            const dataFim = document.getElementById('dataFim').value;
+            const empresa = document.getElementById('empresa').value;
+
+            if (!dataInicio || !dataFim) {
+                alert('Selecione data início e data fim');
+                return;
+            }
+
+            const btn = document.getElementById('btnAtualizar');
+            btn.disabled = true;
+            btn.textContent = 'Carregando...';
+
+            try {
+                const params = new URLSearchParams({ dataInicio, dataFim, empresa });
+                const token = localStorage.getItem('token');
+
+                // Buscar resumo
+                const resResumo = await fetch(`/api/banco/gestao/resumo?${params}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                dadosAtuais.resumo = await resResumo.json();
+
+                // Buscar categorias
+                const resCategorias = await fetch(`/api/banco/gestao/categorias?${params}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const dataCategorias = await resCategorias.json();
+                dadosAtuais.receitas = dataCategorias.receitas || [];
+                dadosAtuais.despesas = dataCategorias.despesas || [];
+
+                renderizarDados();
+
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                alert('Erro ao carregar dados. Verifique sua conexão.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Atualizar';
+            }
+        }
+
+        function renderizarDados() {
+            renderizarResumo();
+            renderizarReceitas();
+            renderizarDespesas();
+        }
+
+        function renderizarResumo() {
+            const { total_entradas, total_saidas, saldo } = dadosAtuais.resumo;
+
+            document.getElementById('totalEntradas').textContent = formatarMoeda(total_entradas);
+            document.getElementById('totalSaidas').textContent = formatarMoeda(Math.abs(total_saidas));
+            document.getElementById('saldoLiquido').textContent = formatarMoeda(saldo);
+        }
+
+        function renderizarReceitas() {
+            const grid = document.getElementById('gridReceitas');
+            const secao = document.getElementById('secaoReceitas');
+
+            if (dadosAtuais.receitas.length === 0) {
+                secao.style.display = 'none';
+                return;
+            }
+
+            secao.style.display = 'block';
+            grid.innerHTML = dadosAtuais.receitas.map(r => `
+                <div class="categoria-card" onclick="abrirModal('${r.categoria}', 'receita')">
+                    <div class="categoria-header">
+                        <div class="categoria-nome">
+                            <span>📈</span>
+                            <span>${r.categoria}</span>
+                        </div>
+                        <div class="categoria-qtd">${r.quantidade} ${r.quantidade === 1 ? 'lançamento' : 'lançamentos'}</div>
+                    </div>
+                    <div class="categoria-valores">
+                        <div>
+                            <div class="categoria-total receita">${formatarMoeda(r.total)}</div>
+                            <div class="categoria-perc">${r.percentual.toFixed(1)}% do total</div>
+                        </div>
+                        <div style="color: #ccc; font-size: 20px;">→</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderizarDespesas() {
+            const grid = document.getElementById('gridDespesas');
+            const secao = document.getElementById('secaoDespesas');
+
+            if (dadosAtuais.despesas.length === 0) {
+                secao.style.display = 'none';
+                return;
+            }
+
+            secao.style.display = 'block';
+            grid.innerHTML = dadosAtuais.despesas.map(d => `
+                <div class="categoria-card" onclick="abrirModal('${d.categoria}', 'despesa')">
+                    <div class="categoria-header">
+                        <div class="categoria-nome">
+                            <span>📉</span>
+                            <span>${d.categoria}</span>
+                        </div>
+                        <div class="categoria-qtd">${d.quantidade} ${d.quantidade === 1 ? 'lançamento' : 'lançamentos'}</div>
+                    </div>
+                    <div class="categoria-valores">
+                        <div>
+                            <div class="categoria-total despesa">${formatarMoeda(Math.abs(d.total))}</div>
+                            <div class="categoria-perc">${d.percentual.toFixed(1)}% do total</div>
+                        </div>
+                        <div style="color: #ccc; font-size: 20px;">→</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ============================================================
+        // MODAL
+        // ============================================================
+        async function abrirModal(categoria, tipo) {
+            const dataInicio = document.getElementById('dataInicio').value;
+            const dataFim = document.getElementById('dataFim').value;
+            const empresa = document.getElementById('empresa').value;
+
+            try {
+                const params = new URLSearchParams({ dataInicio, dataFim, empresa, categoria });
+                const token = localStorage.getItem('token');
+
+                const res = await fetch(`/api/banco/gestao/lancamentos?${params}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                const total = data.lancamentos.reduce((sum, l) => sum + Math.abs(l.valor), 0);
+
+                document.getElementById('modalTitulo').textContent = categoria;
+                document.getElementById('modalSubtitulo').textContent =
+                    `${data.lancamentos.length} ${data.lancamentos.length === 1 ? 'lançamento' : 'lançamentos'} · Total: ${formatarMoeda(total)}`;
+
+                const modalBody = document.getElementById('modalBody');
+                modalBody.innerHTML = data.lancamentos.map(l => `
+                    <div class="lancamento-item ${tipo}">
+                        <div class="lancamento-header">
+                            <div class="lancamento-descricao">${l.descricao_original}</div>
+                            <div class="lancamento-valor ${tipo}">${formatarMoeda(Math.abs(l.valor))}</div>
+                        </div>
+                        <div class="lancamento-meta">
+                            ${formatarData(l.data)}
+                            ${l.nome_origem && l.nome_origem !== l.descricao_original ? ` · Para: ${l.nome_origem}` : ''}
+                            ${l.observacoes ? ` · ${l.observacoes}` : ''}
+                        </div>
+                    </div>
+                `).join('');
+
+                document.getElementById('modalLancamentos').classList.add('active');
+            } catch (error) {
+                console.error('Erro ao carregar lançamentos:', error);
+                alert('Erro ao carregar lançamentos');
+            }
+        }
+
+        function fecharModal() {
+            document.getElementById('modalLancamentos').classList.remove('active');
+        }
+
+        // ============================================================
+        // UTILITÁRIOS
+        // ============================================================
+        function formatarMoeda(valor) {
+            return 'R$ ' + valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatarData(data) {
+            return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
+        }
+    </script>
+
+    <!-- Rodapé com versão -->
+    <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
+        V.2611122202
+    </div>
+</body>
+</html>

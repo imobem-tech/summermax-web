@@ -29,14 +29,25 @@
 
                 <div class="form-group">
                     <label for="senha">Senha</label>
-                    <input
-                        type="password"
-                        id="senha"
-                        name="senha"
-                        required
-                        autocomplete="current-password"
-                        placeholder="••••••••"
-                    >
+                    <div style="position: relative;">
+                        <input
+                            type="password"
+                            id="senha"
+                            name="senha"
+                            required
+                            autocomplete="current-password"
+                            placeholder="••••••••"
+                            style="padding-right: 45px;"
+                        >
+                        <button
+                            type="button"
+                            id="toggleSenha"
+                            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 20px; padding: 5px;"
+                            title="Mostrar/Ocultar senha"
+                        >
+                            👁️
+                        </button>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -60,7 +71,24 @@
     </div>
 
     <script src="/js/login.js"></script>
+    <script>
+        // Botão de visualizar senha
+        document.getElementById('toggleSenha').addEventListener('click', function() {
+            const senhaInput = document.getElementById('senha');
+            const botao = this;
+
+            if (senhaInput.type === 'password') {
+                senhaInput.type = 'text';
+                botao.textContent = '🙈';
+                botao.title = 'Ocultar senha';
+            } else {
+                senhaInput.type = 'password';
+                botao.textContent = '👁️';
+                botao.title = 'Mostrar senha';
+            }
+        });
+    </script>
 </body>
 </html>
 
-<!-- V.2606181515 -->
+<!-- V.2611122234 -->

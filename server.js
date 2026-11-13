@@ -117,10 +117,14 @@ app.get('/orcamentos', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'orcamentos.html'));
 });
 
-// Extrato Bancário
 // Extrato Bancário (PROTEGIDO)
 app.get('/extrato-bancario.html', autenticarHTML, (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'extrato-bancario.html'));
+});
+
+// Gestão Financeira (PROTEGIDO)
+app.get('/gestao-financeira.html', autenticarHTML, (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'gestao-financeira.html'));
 });
 
 // Health check
