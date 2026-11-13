@@ -2,7 +2,7 @@
 
 Sistema de Gestão de Cotas e Marina - Multi-tenant
 
-**Versão:** V.2610292223
+**Versão:** V.2611122300
 
 [![Deploy no Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=)
 
@@ -12,25 +12,43 @@ Sistema de Gestão de Cotas e Marina - Multi-tenant
 
 ### **Estrutura do Projeto:**
 ```
-web-app/
+summermax-web/
 ├── config/
-│   └── jwt.js                 # Configuração JWT
+│   └── jwt.js                          # Configuração JWT
 ├── db/
-│   └── connection.js          # Conexão PostgreSQL (NEON)
+│   └── connection.js                   # Conexão PostgreSQL (NEON)
 ├── middlewares/
-│   └── auth.js                # Autenticação e autorização
+│   └── auth.js                         # Autenticação e autorização
 ├── routes/
-│   └── auth.js                # Rotas de login/logout
+│   ├── auth.js                         # Rotas de login/logout
+│   ├── clientes.js                     # CRUD de clientes
+│   ├── embarcacoes.js                  # CRUD de embarcações
+│   ├── orcamentos.js                   # Sistema de orçamentos
+│   ├── contas.js                       # Contas a receber
+│   ├── usuarios.js                     # Gestão de usuários
+│   └── banco/
+│       ├── index.js                    # Rotas do módulo bancário
+│       ├── extrato-api.js             # API de extrato bancário
+│       ├── gestao-financeira-api.js   # 💰 NOVO: API de gestão financeira
+│       ├── categorias-crud.js         # Categorias bancárias
+│       └── saldo-inicial-api.js       # Saldos iniciais
 ├── public/
 │   ├── css/
-│   │   └── login.css          # Estilos da tela de login
+│   │   ├── login.css                  # Estilos do login
+│   │   └── dashboard.css              # Estilos do dashboard
 │   └── js/
-│       └── login.js           # JavaScript da tela de login
+│       └── login.js                   # JavaScript do login
 ├── views/
-│   └── login.html             # Tela de login
-├── server.js                  # Servidor Express
-├── .env                       # Variáveis de ambiente
-└── package.json               # Dependências
+│   ├── login.html                     # Tela de login (com visualizar senha)
+│   ├── dashboard.html                 # Dashboard principal
+│   ├── clientes.html                  # Gestão de clientes
+│   ├── usuarios.html                  # Gestão de usuários
+│   ├── orcamentos.html                # Sistema de orçamentos
+│   ├── extrato-bancario.html          # Extrato bancário (com menu)
+│   └── gestao-financeira.html         # 💰 NOVO: Análise financeira
+├── server.js                          # Servidor Express
+├── .env                               # Variáveis de ambiente
+└── package.json                       # Dependências
 ```
 
 ---
@@ -106,6 +124,87 @@ Veja o guia completo: **[RAILWAY-QUICKSTART.md](RAILWAY-QUICKSTART.md)**
 
 ## 📡 **API Endpoints:**
 
+### **💰 Gestão Financeira (NOVO):**
+
+#### `GET /api/banco/gestao/resumo`
+Resumo de entradas, saídas e saldo
+```
+Query params:
+- dataInicio: YYYY-MM-DD (obrigatório)
+- dataFim: YYYY-MM-DD (obrigatório)
+- empresa: SUMMER | ALLMAX | TODOS (opcional)
+```
+
+**Resposta:**
+```json
+{
+  "total_movimentacoes": 150,
+  "total_entradas": 115760.00,
+  "total_saidas": -66217.00,
+  "saldo": 49543.00
+}
+```
+
+#### `GET /api/banco/gestao/categorias`
+Categorias agrupadas (receitas + despesas)
+```
+Query params: mesmos do /resumo
+```
+
+**Resposta:**
+```json
+{
+  "receitas": [
+    {
+      "categoria": "Mensalidades",
+      "categoria_id": 1,
+      "quantidade": 87,
+      "total": 63923.00,
+      "percentual": 55.4
+    }
+  ],
+  "despesas": [
+    {
+      "categoria": "Folha de Pagamento",
+      "categoria_id": 21,
+      "quantidade": 5,
+      "total": -24566.00,
+      "percentual": 37.1
+    }
+  ],
+  "totais": {
+    "receitas": 115760.00,
+    "despesas": -66217.00
+  }
+}
+```
+
+#### `GET /api/banco/gestao/lancamentos`
+Lançamentos detalhados de uma categoria
+```
+Query params:
+- dataInicio, dataFim, empresa (mesmos anteriores)
+- categoria: nome da categoria (obrigatório)
+```
+
+**Resposta:**
+```json
+{
+  "categoria": "Mensalidades",
+  "lancamentos": [
+    {
+      "data": "2026-10-15",
+      "valor": 735.00,
+      "descricao_original": "NAUTICA_Emb_PB001",
+      "nome_origem": "João Silva",
+      "observacoes": null
+    }
+  ]
+}
+```
+
+---
+
 ### **Autenticação:**
 
 #### `POST /api/auth/login`
@@ -153,16 +252,34 @@ Dados do usuário logado (requer autenticação)
 
 ---
 
-## 📊 **Próximos Passos:**
+## 📊 **Funcionalidades:**
 
-- [ ] Criar tela de Dashboard
-- [ ] Implementar menu dinâmico
-- [ ] CRUD de Clientes
-- [ ] CRUD de Embarcações
-- [ ] CRUD de Orçamentos
+### ✅ **Implementado:**
+
+- [x] Sistema de autenticação (JWT + bcrypt)
+- [x] Dashboard principal com menu lateral
+- [x] CRUD de Clientes
+- [x] CRUD de Embarcações  
+- [x] CRUD de Usuários
+- [x] Sistema de Orçamentos (com chat)
+- [x] Extrato Bancário completo
+- [x] **💰 Gestão Financeira (NOVO)**
+  - Análise de receitas e despesas por período
+  - Seletor de mês completo
+  - Categorias dinâmicas do banco de dados
+  - Drill-down com modal de lançamentos
+  - Filtros: Data início/fim, Empresa
+  - Cards de resumo: Entradas, Saídas, Saldo
+- [x] Layout unificado com menu lateral
+- [x] Botão visualizar senha no login
+
+### 🔄 **Em Desenvolvimento:**
+
 - [ ] Tela de Contas a Receber
 - [ ] Integração com Asaas
 - [ ] Envio de WhatsApp
+- [ ] Relatórios e Dashboards
+- [ ] Exportação Excel/PDF
 
 ---
 
@@ -205,4 +322,22 @@ npm run predeploy  # Auto-verificação antes de deploy
 
 ---
 
-**V.2610292223**
+---
+
+## 🎯 **Páginas Disponíveis:**
+
+| Página | Rota | Descrição |
+|--------|------|-----------|
+| Login | `/login.html` | Tela de autenticação com visualizar senha |
+| Dashboard | `/dashboard.html` | Página principal com resumo |
+| Clientes | `/clientes.html` | Gestão de clientes |
+| Embarcações | `/embarcacoes.html` | Gestão de embarcações |
+| Usuários | `/usuarios.html` | Gestão de usuários |
+| Orçamentos | `/orcamentos.html` | Sistema de orçamentos |
+| Orçamentos Chat | `/orcamentos` | Interface estilo chat |
+| Extrato Bancário | `/extrato-bancario.html` | 📊 Visualização e análise de extratos |
+| **Gestão Financeira** | `/gestao-financeira.html` | 💰 **NOVO:** Análise completa de receitas/despesas |
+
+---
+
+**V.2611122300**
