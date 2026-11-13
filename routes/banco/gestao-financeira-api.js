@@ -73,7 +73,8 @@ router.get('/categorias', async (req, res) => {
             });
         }
 
-        let sql = `
+        // Query separada para RECEITAS (valores > 0)
+        let sqlReceitas = `
             SELECT
                 COALESCE(c.nome, 'Não categorizada') as categoria,
                 COALESCE(c.id, 0) as categoria_id,
@@ -82,40 +83,54 @@ router.get('/categorias', async (req, res) => {
             FROM bank_extratos e
             LEFT JOIN bank_categorias c ON e.classificacao::integer = c.id
             WHERE e.data >= $1 AND e.data <= $2
+            AND e.valor > 0
+        `;
+
+        // Query separada para DESPESAS (valores < 0)
+        let sqlDespesas = `
+            SELECT
+                COALESCE(c.nome, 'Não categorizada') as categoria,
+                COALESCE(c.id, 0) as categoria_id,
+                COUNT(*) as quantidade,
+                SUM(e.valor) as total
+            FROM bank_extratos e
+            LEFT JOIN bank_categorias c ON e.classificacao::integer = c.id
+            WHERE e.data >= $1 AND e.data <= $2
+            AND e.valor < 0
         `;
 
         const params = [dataInicio, dataFim];
 
         if (empresa && empresa !== 'TODOS') {
-            sql += ' AND e.empresa = $3';
+            sqlReceitas += ' AND e.empresa = $3';
+            sqlDespesas += ' AND e.empresa = $3';
             params.push(empresa);
         }
 
-        sql += `
-            GROUP BY c.nome, c.id
-            ORDER BY ABS(SUM(e.valor)) DESC
-        `;
+        sqlReceitas += ' GROUP BY c.nome, c.id ORDER BY SUM(e.valor) DESC';
+        sqlDespesas += ' GROUP BY c.nome, c.id ORDER BY SUM(e.valor) ASC';
 
-        const result = await pool.query(sql, params);
+        // Executar ambas as queries
+        const [resultReceitas, resultDespesas] = await Promise.all([
+            pool.query(sqlReceitas, params),
+            pool.query(sqlDespesas, params)
+        ]);
 
-        // Separar receitas e despesas
-        const receitas = result.rows
-            .filter(c => parseFloat(c.total) > 0)
-            .map(c => ({
-                categoria: c.categoria,
-                categoria_id: c.categoria_id,
-                quantidade: parseInt(c.quantidade),
-                total: parseFloat(c.total),
-            }));
+        // Mapear receitas
+        const receitas = resultReceitas.rows.map(c => ({
+            categoria: c.categoria,
+            categoria_id: c.categoria_id,
+            quantidade: parseInt(c.quantidade),
+            total: parseFloat(c.total),
+        }));
 
-        const despesas = result.rows
-            .filter(c => parseFloat(c.total) < 0)
-            .map(c => ({
-                categoria: c.categoria,
-                categoria_id: c.categoria_id,
-                quantidade: parseInt(c.quantidade),
-                total: parseFloat(c.total),
-            }));
+        // Mapear despesas
+        const despesas = resultDespesas.rows.map(c => ({
+            categoria: c.categoria,
+            categoria_id: c.categoria_id,
+            quantidade: parseInt(c.quantidade),
+            total: parseFloat(c.total),
+        }));
 
         // Calcular totais para percentuais
         const totalReceitas = receitas.reduce((sum, r) => sum + r.total, 0);
