@@ -1,5 +1,5 @@
 // ============================================================
-// routes/banco/gestao-financeira-api.js — V.2611122202
+// routes/banco/gestao-financeira-api.js — V.2611122323
 // API GESTÃO FINANCEIRA (SUMMERMAX-WEB)
 // 🔒 PROTEGIDA COM AUTENTICAÇÃO
 // ============================================================
