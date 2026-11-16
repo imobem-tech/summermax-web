@@ -1,5 +1,5 @@
 // ============================================================
-// CLIENTES.JS - V.2610291912
+// CLIENTES.JS - V.2611161100
 // JavaScript da tela de clientes
 // ============================================================
 
@@ -1460,9 +1460,15 @@ function abrirModalCancelamento() {
     document.getElementById('cancelMotivo').value = '';
     document.getElementById('cancelAsaas').checked = true;
 
-    // Mostrar loading do Asaas
-    document.getElementById('asaasStatusCancelamento').style.display = 'block';
+    // Restaurar botão de confirmação (pode ter ficado "Cancelando..." da cobrança anterior)
+    resetarBotaoCancelamento();
+
+    // Mostrar loading do Asaas (o conteúdo pode ter sido trocado por mensagem de erro antes)
+    const asaasStatus = document.getElementById('asaasStatusCancelamento');
+    asaasStatus.innerHTML = '<div class="loading-asaas">⏳ Buscando dados do Asaas...</div>';
+    asaasStatus.style.display = 'block';
     document.getElementById('asaasDadosCancelamento').style.display = 'none';
+    document.getElementById('asaasAvisoCanceladaCancel').style.display = 'none';
 
     // Abrir modal
     const modal = document.getElementById('modalCancelarCobranca');
@@ -1481,6 +1487,15 @@ function abrirModalCancelamento() {
 function fecharModalCancelamento() {
     document.getElementById('modalCancelarCobranca').classList.remove('show');
     contaAtualCancelamento = null;
+    resetarBotaoCancelamento();
+}
+
+function resetarBotaoCancelamento() {
+    const btnConfirmar = document.getElementById('btnConfirmarCancelamento');
+    if (btnConfirmar) {
+        btnConfirmar.disabled = false;
+        btnConfirmar.textContent = '❌ Confirmar Cancelamento';
+    }
 }
 
 async function buscarDadosAsaasCancelamento(codigoConta) {
@@ -1559,14 +1574,17 @@ async function confirmarCancelamento() {
             return;
         }
 
+        // Guardar o código antes de fechar o modal (fecharModalCancelamento zera contaAtualCancelamento)
+        const codigoCancelado = contaAtualCancelamento.codigo;
+
         // Desabilitar botão
-        const btnConfirmar = event.target;
+        const btnConfirmar = document.getElementById('btnConfirmarCancelamento');
         btnConfirmar.disabled = true;
         btnConfirmar.textContent = '⏳ Cancelando...';
 
         // Enviar requisição
         const token = localStorage.getItem('token');
-        const response = await fetch(`/api/contas/${contaAtualCancelamento.codigo}/cancelar`, {
+        const response = await fetch(`/api/contas/${codigoCancelado}/cancelar`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -1609,21 +1627,17 @@ async function confirmarCancelamento() {
         // Recarregar lista de contas
         await carregarContasReceber(clienteAtual.Codigo);
 
-        // Recarregar detalhes (se modal ainda aberto)
-        if (document.getElementById('modalDetalhesConta').style.display === 'flex') {
-            await verDetalhesConta(contaAtualCancelamento.codigo);
+        // Recarregar detalhes (se modal ainda aberto; ele é aberto com a classe "show")
+        if (document.getElementById('modalDetalhesConta').classList.contains('show')) {
+            await verDetalhesConta(codigoCancelado);
         }
 
     } catch (error) {
         console.error('Erro ao cancelar cobrança:', error);
         alert(`❌ Erro ao cancelar: ${error.message}`);
-
-        // Reabilitar botão
-        const btnConfirmar = document.querySelector('.btn-modal-danger');
-        if (btnConfirmar) {
-            btnConfirmar.disabled = false;
-            btnConfirmar.textContent = '❌ Confirmar Cancelamento';
-        }
+    } finally {
+        // Sempre reabilitar o botão, com sucesso ou erro
+        resetarBotaoCancelamento();
     }
 }
 
